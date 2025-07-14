@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 
 // TypewriterEffect component for the title
 interface TypewriterEffectProps {
@@ -8,15 +8,13 @@ interface TypewriterEffectProps {
   speed?: number;
   restartDelay?: number;
   eraseSpeed?: number;
-  shouldLoop?: boolean;
 }
 
 function TypewriterEffect({ 
   text, 
   speed = 150, 
   restartDelay = 3000,
-  eraseSpeed = 75,
-  shouldLoop = true
+  eraseSpeed = 75
 }: TypewriterEffectProps) {
   const [displayText, setDisplayText] = useState('')
   const [isComplete, setIsComplete] = useState(false)
@@ -95,29 +93,95 @@ function TypewriterEffect({
   )
 }
 
-export default function ServicesGrid() {
-  const services = [
-    {
-      id: 1,
-      title: "Event Production",
-      description: "We transform ideas into immersive experiences. By blending creative vision with technical precision, we design, manage, and execute seamless events that captivate audiences and leave a lasting impact."
-    },
-    {
-      id: 2,
-      title: "Event Planning",
-      description: "Our team meticulously plans events of any size, ensuring every detail is taken care of to deliver a flawless experience that exceeds client expectations."
-    },
-    {
-      id: 3,
-      title: "Talent Management",
-      description: "Leveraging our strong relationships with artists, we curate exceptional line-ups and deploy a dedicated team to manage talent on the day of the event, ensuring smooth coordination."
-    },
-    {
-      id: 4,
-      title: "Marketing",
-      description: "We craft compelling marketing strategies to promote events effectively, ensuring they reach the right audience and maximize engagement."
+// RevealText component for word-by-word text reveal
+interface RevealTextProps {
+  children: ReactNode;
+}
+
+function RevealText({ children }: RevealTextProps) {
+  const textRef = useRef<HTMLDivElement>(null)
+  
+  useEffect(() => {
+    if (!textRef.current) return
+    
+    // Select all span elements with class "word"
+    const wordSpans = textRef.current.querySelectorAll('.word')
+    
+    if (!wordSpans.length) return
+    
+    // Initially set all words to dark
+    wordSpans.forEach((word, index) => {
+      word.classList.add('text-zinc-900')
+      word.classList.add('transition-colors')
+      word.classList.add('duration-800')
+      // Add data attribute to track the global order
+      word.setAttribute('data-index', index.toString())
+      word.setAttribute('data-state', 'dark')
+    })
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // When an element containing words enters viewport
+        if (entry.isIntersecting) {
+          // Get all words in this element
+          const element = entry.target as HTMLElement
+          const words = element.querySelectorAll('.word')
+          
+          words.forEach((word, wordIndex) => {
+            const currentState = word.getAttribute('data-state')
+            
+            // Set a delay based on the word's position
+            setTimeout(() => {
+              if (currentState === 'dark') {
+                // Change to white
+                word.classList.remove('text-zinc-900')
+                word.classList.add('text-white')
+                word.setAttribute('data-state', 'light')
+              } else {
+                // Change to dark
+                word.classList.remove('text-white')
+                word.classList.add('text-zinc-900')
+                word.setAttribute('data-state', 'dark')
+              }
+            }, wordIndex * 106) // 106ms delay between each word (1.7x faster)
+          })
+        }
+      })
+    }, {
+      threshold: 0.8, // Trigger when element is 80% visible
+      rootMargin: '0px 0px -10% 0px'
+    })
+    
+    // Observe paragraphs and headings
+    const elements = textRef.current.querySelectorAll('p, h3')
+    elements.forEach((el) => {
+      observer.observe(el)
+    })
+    
+    return () => {
+      elements.forEach((el) => {
+        observer.unobserve(el)
+      })
     }
-  ];
+  }, [])
+  
+  return (
+    <div ref={textRef} className="relative">
+      {children}
+    </div>
+  )
+}
+
+export default function ServicesGrid() {
+  // Split text into words for the reveal effect
+  const splitTextIntoWords = (text: string) => {
+    return text.split(' ').map((word, index) => (
+      <span key={index}>
+        <span className="word">{word}</span>
+        {index < text.split(' ').length - 1 ? ' ' : ''}
+      </span>
+    ));
+  };
 
   return (
     <section className="w-full min-h-screen bg-black text-white px-6 md:px-16 lg:px-24 flex flex-col justify-center py-16">
@@ -135,22 +199,30 @@ export default function ServicesGrid() {
         <div className="flex flex-col gap-y-36 md:gap-y-40 pr-4">
           {/* Item 1 */}
           <div className="flex flex-col pr-8 md:pr-16">
-            <h3 className="font-serif text-4xl md:text-5xl font-light mb-6">
-              1. Event Production
-            </h3>
-            <p className="text-base md:text-lg leading-relaxed max-w-md font-light">
-              We transform ideas into immersive experiences. By blending creative vision with technical precision, we design, manage, and execute seamless events that captivate audiences and leave a lasting impact.
-            </p>
+            <RevealText>
+              <h3 className="font-serif text-4xl md:text-5xl font-light mb-6">
+                {splitTextIntoWords("1. Event Production")}
+              </h3>
+              <p className="text-base md:text-lg leading-relaxed max-w-md font-light">
+                {splitTextIntoWords(
+                  "We transform ideas into immersive experiences. By blending creative vision with technical precision, we design, manage, and execute seamless events that captivate audiences and leave a lasting impact."
+                )}
+              </p>
+            </RevealText>
           </div>
           
           {/* Item 3 */}
           <div className="flex flex-col pr-8 md:pr-16">
-            <h3 className="font-serif text-4xl md:text-5xl font-light mb-6 opacity-90">
-              3. Talent Management
-            </h3>
-            <p className="text-base md:text-lg leading-relaxed opacity-75 max-w-md font-light">
-              Leveraging our strong relationships with artists, we curate exceptional line-ups and deploy a dedicated team to manage talent on the day of the event, ensuring smooth coordination.
-            </p>
+            <RevealText>
+              <h3 className="font-serif text-4xl md:text-5xl font-light mb-6 opacity-90">
+                {splitTextIntoWords("3. Marketing")}
+              </h3>
+              <p className="text-base md:text-lg leading-relaxed opacity-75 max-w-md font-light">
+                {splitTextIntoWords(
+                  "We craft compelling marketing strategies to promote events effectively, ensuring they reach the right audience and maximize engagement."
+                )}
+              </p>
+            </RevealText>
           </div>
         </div>
         
@@ -158,22 +230,30 @@ export default function ServicesGrid() {
         <div className="flex flex-col gap-y-36 md:gap-y-40 mt-24 md:mt-32 pl-4">
           {/* Item 2 */}
           <div className="flex flex-col pr-8 md:pr-16">
-            <h3 className="font-serif text-4xl md:text-5xl font-light mb-6">
-              2. Event Planning
-            </h3>
-            <p className="text-base md:text-lg leading-relaxed max-w-md font-light">
-              Our team meticulously plans events of any size, ensuring every detail is taken care of to deliver a flawless experience that exceeds client expectations.
-            </p>
+            <RevealText>
+              <h3 className="font-serif text-4xl md:text-5xl font-light mb-6">
+                {splitTextIntoWords("2. Event Planning")}
+              </h3>
+              <p className="text-base md:text-lg leading-relaxed max-w-md font-light">
+                {splitTextIntoWords(
+                  "Our team meticulously plans events of any size, ensuring every detail is taken care of to deliver a flawless experience that exceeds client expectations."
+                )}
+              </p>
+            </RevealText>
           </div>
           
           {/* Item 4 */}
           <div className="flex flex-col pr-8 md:pr-16">
-            <h3 className="font-serif text-4xl md:text-5xl font-light mb-6 opacity-90">
-              4. Marketing
-            </h3>
-            <p className="text-base md:text-lg leading-relaxed opacity-75 max-w-md font-light">
-              We craft compelling marketing strategies to promote events effectively, ensuring they reach the right audience and maximize engagement.
-            </p>
+            <RevealText>
+              <h3 className="font-serif text-4xl md:text-5xl font-light mb-6 opacity-90">
+                {splitTextIntoWords("4. Talent Management")}
+              </h3>
+              <p className="text-base md:text-lg leading-relaxed opacity-75 max-w-md font-light">
+                {splitTextIntoWords(
+                  "Leveraging our strong relationships with artists, we curate exceptional line-ups and deploy a dedicated team to manage talent on the day of the event, ensuring smooth coordination."
+                )}
+              </p>
+            </RevealText>
           </div>
         </div>
       </div>
@@ -182,42 +262,58 @@ export default function ServicesGrid() {
       <div className="md:hidden flex flex-col gap-y-16 max-w-xl mx-auto">
         {/* Item 1 */}
         <div className="flex flex-col">
-          <h3 className="font-serif text-4xl font-light mb-4">
-            1. Event Production
-          </h3>
-          <p className="text-base leading-relaxed font-light">
-            We transform ideas into immersive experiences. By blending creative vision with technical precision, we design, manage, and execute seamless events that captivate audiences and leave a lasting impact.
-          </p>
+          <RevealText>
+            <h3 className="font-serif text-4xl font-light mb-4">
+              {splitTextIntoWords("1. Event Production")}
+            </h3>
+            <p className="text-base leading-relaxed font-light">
+              {splitTextIntoWords(
+                "We transform ideas into immersive experiences. By blending creative vision with technical precision, we design, manage, and execute seamless events that captivate audiences and leave a lasting impact."
+              )}
+            </p>
+          </RevealText>
         </div>
         
         {/* Item 2 */}
         <div className="flex flex-col">
-          <h3 className="font-serif text-4xl font-light mb-4">
-            2. Event Planning
-          </h3>
-          <p className="text-base leading-relaxed font-light">
-            Our team meticulously plans events of any size, ensuring every detail is taken care of to deliver a flawless experience that exceeds client expectations.
-          </p>
+          <RevealText>
+            <h3 className="font-serif text-4xl font-light mb-4">
+              {splitTextIntoWords("2. Event Planning")}
+            </h3>
+            <p className="text-base leading-relaxed font-light">
+              {splitTextIntoWords(
+                "Our team meticulously plans events of any size, ensuring every detail is taken care of to deliver a flawless experience that exceeds client expectations."
+              )}
+            </p>
+          </RevealText>
         </div>
         
         {/* Item 3 */}
         <div className="flex flex-col">
-          <h3 className="font-serif text-4xl font-light mb-4 opacity-90">
-            3. Talent Management
-          </h3>
-          <p className="text-base leading-relaxed opacity-75 font-light">
-            Leveraging our strong relationships with artists, we curate exceptional line-ups and deploy a dedicated team to manage talent on the day of the event, ensuring smooth coordination.
-          </p>
+          <RevealText>
+            <h3 className="font-serif text-4xl font-light mb-4 opacity-90">
+              {splitTextIntoWords("3. Marketing")}
+            </h3>
+            <p className="text-base leading-relaxed opacity-75 font-light">
+              {splitTextIntoWords(
+                "We craft compelling marketing strategies to promote events effectively, ensuring they reach the right audience and maximize engagement."
+              )}
+            </p>
+          </RevealText>
         </div>
         
         {/* Item 4 */}
         <div className="flex flex-col">
-          <h3 className="font-serif text-4xl font-light mb-4 opacity-90">
-            4. Marketing
-          </h3>
-          <p className="text-base leading-relaxed opacity-75 font-light">
-            We craft compelling marketing strategies to promote events effectively, ensuring they reach the right audience and maximize engagement.
-          </p>
+          <RevealText>
+            <h3 className="font-serif text-4xl font-light mb-4 opacity-90">
+              {splitTextIntoWords("4. Talent Management")}
+            </h3>
+            <p className="text-base leading-relaxed opacity-75 font-light">
+              {splitTextIntoWords(
+                "Leveraging our strong relationships with artists, we curate exceptional line-ups and deploy a dedicated team to manage talent on the day of the event, ensuring smooth coordination."
+              )}
+            </p>
+          </RevealText>
         </div>
       </div>
     </section>

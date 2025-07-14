@@ -19,15 +19,13 @@ interface TypewriterEffectProps {
   speed?: number;
   restartDelay?: number;
   eraseSpeed?: number;
-  shouldLoop?: boolean;
 }
 
 function TypewriterEffect({ 
   text, 
   speed = 150, 
   restartDelay = 3000,
-  eraseSpeed = 75, // Faster erase speed
-  shouldLoop = true
+  eraseSpeed = 75 // Faster erase speed
 }: TypewriterEffectProps) {
   const [displayText, setDisplayText] = useState('')
   const [isComplete, setIsComplete] = useState(false)
@@ -110,39 +108,24 @@ export default function UpcomingEvents() {
   const events: Event[] = [
     {
       id: 1,
-      title: "SoundSet Sunday",
-      image: "/images/flyer.png",
-      date: "08 March 2024",
-      location: "The PlayGround, 73JUTA ST, BRAAM JOBURG",
-      link: "/events/soundset-sunday"
+      title: "Electic Sessions",
+      image: "/upcoming_events_poster/electic_session_poster.png",
+      date: "25 July 2025",
+      location: "Democracy Bar, Illovo",
+      link: "/events?event=electic-session"
     },
     {
       id: 2,
-      title: "The BobbyNsenga Experience",
-      image: "/images/bobby_1.png",
-      date: "08 March 2024",
-      location: "The PlayGround, 73JUTA ST, BRAAM JOBURG",
-      link: "/events/rare"
-    },
-    {
-      id: 3,
-      title: "The BobbyNsenga Experience",
-      image: "/images/bobby_2.png",
-      date: "15 March 2024",
-      location: "The PlayGround, 73JUTA ST, BRAAM JOBURG",
-      link: "/events/electric-session"
-    },   
-    {
-      id: 4,
-      title: "Planet Rare",
-      image: "/images/rare_fly.png",
-      date: "15 March 2024",
-      location: "The PlayGround, 73JUTA ST, BRAAM JOBURG",
-      link: "/events/electric-session"
+      title: "SoundSet Sunday",
+      image: "/upcoming_events_poster/soundset_poster.png",
+      date: "27 April 2025",
+      location: "Parkview Event Space, Woodstock",
+      link: "/events?event=soundset-sunday"
     }
   ]
 
   const [isMounted, setIsMounted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -168,14 +151,33 @@ export default function UpcomingEvents() {
     }
   }
 
+  const handleExploreClick = () => {
+    setIsLoading(true)
+    // Loading will be cleared when page actually transitions
+    // Add a timeout as backup in case navigation doesn't happen
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 3000)
+  }
+
   return (
-    <section className="bg-black text-white h-[85vh] flex flex-col justify-center relative border-b border-white overflow-hidden">
+    <section className="bg-black text-white min-h-[85vh] py-16 md:pt-24 md:pb-20 lg:pt-28 lg:pb-24 xl:pt-32 xl:pb-28 flex flex-col justify-center relative border-b border-white overflow-hidden">
       <div className="absolute bottom-0 left-0 w-full h-[2px] bg-white animate-ping origin-bottom scale-y-150"></div>
-      <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 w-full">
+      
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-white text-base md:text-lg font-serif tracking-wider">Loading...</p>
+          </div>
+        </div>
+      )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 w-full">
         {/* Title with border */}
-        <div className="flex justify-center mb-10 md:mb-14">
-          <div className="border-2 border-white inline-block px-6 py-3 md:px-10 md:py-4">
-            <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl font-light tracking-wider">
+        <div className="flex justify-center mb-10">
+          <div className="border-2 border-white inline-block px-8 py-4 max-w-full">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light tracking-wider whitespace-nowrap">
               <TypewriterEffect text="UPCOMING EVENTS..." speed={100} />
             </h2>
           </div>
@@ -183,22 +185,22 @@ export default function UpcomingEvents() {
 
         {/* Horizontal scroll controls */}
         <div className="flex justify-end mb-6 md:mb-8">
-          <div className="flex space-x-4">
+          <div className="flex space-x-3 md:space-x-4">
             <button 
               onClick={scrollLeft}
-              className="p-2 border border-white rounded-full hover:bg-white hover:text-black transition-colors"
+              className="p-2 md:p-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors touch-manipulation"
               aria-label="Scroll left"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:w-6 md:h-6 lucide lucide-chevron-left">
                 <path d="m15 18-6-6 6-6"/>
               </svg>
             </button>
             <button 
               onClick={scrollRight}
-              className="p-2 border border-white rounded-full hover:bg-white hover:text-black transition-colors"
+              className="p-2 md:p-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors touch-manipulation"
               aria-label="Scroll right"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:w-6 md:h-6 lucide lucide-chevron-right">
                 <path d="m9 18 6-6-6-6"/>
               </svg>
             </button>
@@ -208,42 +210,43 @@ export default function UpcomingEvents() {
         {/* Events display - horizontal scrollable layout */}
         <div 
           ref={scrollContainerRef}
-          className="flex space-x-24 md:space-x-36 lg:space-x-48 mb-10 md:mb-14 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
+          className="flex space-x-6 sm:space-x-8 md:space-x-24 lg:space-x-36 xl:space-x-48 mb-8 md:mb-12 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
         >
           {/* Only render client-side content after mounting to prevent hydration mismatch */}
           {isMounted && events.map((event) => (
-            <div key={event.id} className="w-[85vw] md:w-[40vw] lg:w-[35vw] xl:w-[30vw] flex-shrink-0">
-              <div className="flex flex-col md:flex-row md:items-end gap-6 md:gap-8">
+            <div key={event.id} className="w-[75vw] sm:w-[70vw] md:w-[40vw] lg:w-[35vw] xl:w-[30vw] flex-shrink-0">
+              <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:gap-8">
                 {/* Event Image with white border */}
-                <div className="flex-shrink-0 rounded-3xl border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5]">
+                <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5]">
                   <div className="relative w-full h-full">
                     <Image
                       src={event.image}
                       alt={event.title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 90vw, 300px"
+                      sizes="(max-width: 640px) 75vw, (max-width: 768px) 70vw, 300px"
                     />
                   </div>
                 </div>
 
                 {/* Event Details - Aligned to match the reference */}
                 <div className="flex flex-col justify-center md:justify-start flex-1">
-                  <h3 className="text-2xl md:text-4xl font-serif mb-3 md:mb-4 font-light">{event.title}</h3>
-                  <p className="text-base md:text-lg mb-1 font-mono">{event.date}</p>
-                  <p className="text-base md:text-lg mb-4 md:mb-6 font-mono">{event.location}</p>
+                  <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{event.title}</h3>
+                  <p className="text-sm sm:text-base md:text-lg mb-1 font-mono">{event.date}</p>
+                  <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 font-mono">{event.location}</p>
 
                   {/* Buttons - Sized to match the reference */}
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 sm:gap-4">
                     <Link 
                       href={`${event.link}/tickets`} 
-                      className="inline-block border-2 border-white px-6 py-2 text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors"
+                      className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
                     >
                       TICKETS
                     </Link>
                     <Link 
                       href={event.link} 
-                      className="inline-block border-2 border-white px-6 py-2 text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors"
+                      className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                      onClick={handleExploreClick}
                     >
                       EXPLORE
                     </Link>
@@ -255,16 +258,16 @@ export default function UpcomingEvents() {
           
           {/* Loading skeleton when not mounted */}
           {!isMounted && (
-            <div className="w-[85vw] md:w-[40vw] flex-shrink-0">
-              <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-                <div className="flex-shrink-0 rounded-3xl border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5] bg-gray-900"></div>
+            <div className="w-[75vw] sm:w-[70vw] md:w-[40vw] flex-shrink-0">
+              <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:gap-8">
+                <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5] bg-gray-900"></div>
                 <div className="flex flex-col justify-center md:justify-start flex-1">
-                  <div className="h-8 md:h-10 bg-gray-900 rounded w-3/4 mb-3 md:mb-4"></div>
-                  <div className="h-4 bg-gray-900 rounded w-1/2 mb-1"></div>
-                  <div className="h-4 bg-gray-900 rounded w-3/4 mb-4 md:mb-6"></div>
-                  <div className="flex gap-4">
-                    <div className="h-10 bg-gray-900 rounded w-24"></div>
-                    <div className="h-10 bg-gray-900 rounded w-24"></div>
+                  <div className="h-6 sm:h-8 md:h-10 bg-gray-900 rounded w-3/4 mb-2 sm:mb-3 md:mb-4"></div>
+                  <div className="h-3 sm:h-4 bg-gray-900 rounded w-1/2 mb-1"></div>
+                  <div className="h-3 sm:h-4 bg-gray-900 rounded w-3/4 mb-3 sm:mb-4 md:mb-6"></div>
+                  <div className="flex gap-3 sm:gap-4">
+                    <div className="h-8 sm:h-10 bg-gray-900 rounded w-20 sm:w-24"></div>
+                    <div className="h-8 sm:h-10 bg-gray-900 rounded w-20 sm:w-24"></div>
                   </div>
                 </div>
               </div>

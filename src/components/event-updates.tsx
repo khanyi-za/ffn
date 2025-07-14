@@ -10,7 +10,6 @@ interface TypewriterEffectProps {
   speed?: number;
   restartDelay?: number;
   eraseSpeed?: number;
-  shouldLoop?: boolean;
 }
 
 function TypewriterEffect({ 
@@ -18,7 +17,6 @@ function TypewriterEffect({
   speed = 150, 
   restartDelay = 3000,
   eraseSpeed = 75, // Faster erase speed
-  shouldLoop = true
 }: TypewriterEffectProps) {
   const [displayText, setDisplayText] = useState('')
   const [isComplete, setIsComplete] = useState(false)
@@ -103,7 +101,7 @@ interface EventUpdatesProps {
   tagline?: string
   eventDate?: string
   eventLocation?: string
-  eventImage?: string
+  eventVideo?: string
   logoImage?: string
 }
 
@@ -111,23 +109,20 @@ export default function EventUpdates({
   eventName = "SOUNDSET SUNDAY",
   description = "Lorem ipsum dolor sit amet consectetur. Aliquam sapien mattis proin ut interdum tincidunt. Curabitur mauris enim rhoncus ullamcorper. Sceleris que nibh pretium",
   tagline = "We Do Cool Stuff All The Time, We Just Happen To Show It On Sundays.",
-  eventDate = "08 MARCH 25",
-  eventLocation = "THE PLAYGROUND, 73 JUTA ST, BRAAM.",
-  eventImage = "/images/video_variable",
+  eventDate = "27 APRIL 25",
+  eventLocation = "Parkview Event Space, Woodstock",
+  eventVideo = "/videos/soundset_video.mp4",
   logoImage = "/images/ss_color_transparent.png",
 }: EventUpdatesProps) {
   return (
     <section className="bg-black text-white pt-0 pb-16 md:pb-24 relative">
-      {/* Top border line */}
-      <div className="w-full border-t border-white"></div>
-
       <div className="container mx-auto px-6 md:px-12 max-w-6xl mt-16 md:mt-24">
         {/* Top section with logo and title - now grouped together */}
         <div className="flex flex-col md:flex-row items-center md:items-start mb-16 md:mb-24">
           {/* Logo and Title Group */}
           <div className="flex flex-col md:flex-row items-center md:items-center gap-6 md:gap-8">
             {/* Logo */}
-            <div className="w-40 md:w-64">
+            <div className="w-40 md:w-64 border-2 border-white p-3 rounded-lg flex items-center justify-center">
               <Image
                 src={logoImage || "/placeholder.svg"}
                 alt={`${eventName} logo`}
@@ -138,7 +133,7 @@ export default function EventUpdates({
             </div>
 
             {/* Event Title */}
-            <div className="border border-white inline-block px-8 py-4 md:min-w-[400px] text-center">
+            <div className="border-2 border-white inline-block px-8 py-4 md:min-w-[400px] text-center">
               <h2 className="font-serif text-3xl md:text-5xl font-light">
                 <TypewriterEffect 
                   text={`${eventName}...`}
@@ -150,7 +145,7 @@ export default function EventUpdates({
           </div>
         </div>
 
-        {/* Content section with description and image */}
+        {/* Content section with description and video */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
           {/* Event Description */}
           <div className="md:pr-8">
@@ -158,13 +153,14 @@ export default function EventUpdates({
             <p className="font-mono text-sm md:text-base pl-4 md:pl-8">{tagline}</p>
           </div>
 
-          {/* Event Image */}
-          <div className="rounded-3xl overflow-hidden">
-            <Image
-              src={eventImage || "/placeholder.svg"}
-              alt={`${eventName} event`}
-              width={600}
-              height={400}
+          {/* Event Video - replaced Image with video */}
+          <div className="rounded-3xl overflow-hidden h-[440px] border-3 border-white -mx-3 md:transform md:scale-110">
+            <video 
+              src={eventVideo || "/videos/placeholder.mp4"}
+              autoPlay
+              muted
+              loop
+              playsInline
               className="object-cover w-full h-full"
             />
           </div>

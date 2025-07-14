@@ -42,3 +42,9 @@ export default function EventImagesRow({
   )
 }
 
+/*
+I want to change the component in the home page. 
+The EventImagesRow component. I only want this component to change in the homepage, every other page it is used it must stay the same. 
+So only adapt it for the hompage. The component should contine look the way it curretly does but I want to add somthing new. 
+the three images that at appear any given time should revolve every 2.5 seconds.the rotating is
+*/

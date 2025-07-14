@@ -1,9 +1,10 @@
 'use client'
 
+import Navigation from "@/components/navigation"
 import AboutHero from "@/components/about-hero"
 import Footer from "@/components/footer"
 import Image from "next/image"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, ReactNode } from "react"
 
 // TypewriterEffect component for the title
 interface TypewriterEffectProps {
@@ -11,15 +12,13 @@ interface TypewriterEffectProps {
   speed?: number;
   restartDelay?: number;
   eraseSpeed?: number;
-  shouldLoop?: boolean;
 }
 
 function TypewriterEffect({ 
   text, 
   speed = 150, 
   restartDelay = 3000,
-  eraseSpeed = 75,
-  shouldLoop = true
+  eraseSpeed = 75
 }: TypewriterEffectProps) {
   const [displayText, setDisplayText] = useState('')
   const [isComplete, setIsComplete] = useState(false)
@@ -98,9 +97,109 @@ function TypewriterEffect({
   )
 }
 
+// ScrollRevealText component for scroll-triggered text reveal
+interface ScrollRevealTextProps {
+  children: ReactNode;
+}
+
+function ScrollRevealText({ children }: ScrollRevealTextProps) {
+  const textRef = useRef<HTMLDivElement>(null)
+  
+  useEffect(() => {
+    if (!textRef.current) return
+    
+    // Select all span elements which will be individual words
+    const wordSpans = textRef.current.querySelectorAll('.word')
+    
+    if (!wordSpans.length) return
+    
+    // Initially set all words to gray
+    wordSpans.forEach((word, index) => {
+      word.classList.add('text-zinc-900')
+      word.classList.add('transition-colors')
+      word.classList.add('duration-800')
+      // Add data attribute to track the global order
+      word.setAttribute('data-index', index.toString())
+      word.setAttribute('data-state', 'gray')
+    })
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // When a paragraph containing words enters viewport
+        if (entry.isIntersecting) {
+          // Get all words in this paragraph
+          const paragraph = entry.target as HTMLElement
+          const words = paragraph.querySelectorAll('.word')
+          
+          words.forEach((word, wordIndex) => {
+            const currentState = word.getAttribute('data-state')
+            
+            // Set a delay based on the word's position
+            setTimeout(() => {
+              if (currentState === 'gray') {
+                // Change to white
+                word.classList.remove('text-zinc-900')
+                word.classList.add('text-white')
+                word.setAttribute('data-state', 'white')
+              } else {
+                // Change to gray
+                word.classList.remove('text-white')
+                word.classList.add('text-zinc-900')
+                word.setAttribute('data-state', 'gray')
+              }
+            }, wordIndex * 180) // 180ms delay between each word
+          })
+        }
+      })
+    }, {
+      threshold: 0.8, // Trigger when element is 80% visible
+      rootMargin: '0px 0px -10% 0px'
+    })
+    
+    // Observe each paragraph (we'll reveal words when paragraph enters viewport)
+    const paragraphs = textRef.current.querySelectorAll('p')
+    paragraphs.forEach((para) => {
+      observer.observe(para)
+    })
+    
+    return () => {
+      paragraphs.forEach((para) => {
+        observer.unobserve(para)
+      })
+    }
+  }, [])
+  
+  return (
+    <div ref={textRef} className="relative">
+      {children}
+    </div>
+  )
+}
+
 export default function AboutUs() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: 300,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: -300,
+        behavior: 'smooth'
+      })
+    }
+  }
+
   return (
     <main className="bg-black text-white with-hero-nav">
+      <Navigation />
       <AboutHero />
       
       {/* What We Do Section */}
@@ -109,21 +208,37 @@ export default function AboutUs() {
           <h2 className="font-serif text-2xl md:text-3xl mb-16 font-light">What We Do?</h2>
           
           <div className="font-serif text-[28px] sm:text-3xl md:text-4xl lg:text-5xl leading-tight">
-            <p className="mb-0">
-              <span>Frenchfornew curates unforgettable</span>
-            </p>
-            <p className="mb-0">
-              <span>experiences by blending creativity,</span>
-            </p>
-            <p className="mb-0">
-              <span>culture, and innovation, transforming</span>
-            </p>
-            <p className="mb-0">
-              <span>events into vibrant cele</span><span className="text-gray-500">brations of</span>
-            </p>
-            <p className="mb-0">
-              <span className="text-gray-500">music and art.</span>
-            </p>
+            <ScrollRevealText>
+              <p className="mb-0">
+                <span className="word">Frenchfornew</span>{' '}
+                <span className="word">curates</span>{' '}
+                <span className="word">unforgettable</span>
+              </p>
+              <p className="mb-0">
+                <span className="word">experiences</span>{' '}
+                <span className="word">by</span>{' '}
+                <span className="word">blending</span>{' '}
+                <span className="word">creativity,</span>
+              </p>
+              <p className="mb-0">
+                <span className="word">culture,</span>{' '}
+                <span className="word">and</span>{' '}
+                <span className="word">innovation,</span>{' '}
+                <span className="word">transforming</span>
+              </p>
+              <p className="mb-0">
+                <span className="word">events</span>{' '}
+                <span className="word">into</span>{' '}
+                <span className="word">vibrant</span>{' '}
+                <span className="word">celebrations</span>{' '}
+                <span className="word">of</span>
+              </p>
+              <p className="mb-0">
+                <span className="word">music</span>{' '}
+                <span className="word">and</span>{' '}
+                <span className="word">art.</span>
+              </p>
+            </ScrollRevealText>
           </div>
         </div>
       </section>
@@ -134,14 +249,15 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
             {/* Left column - Text content */}
             <div className="max-w-xl">
-              <div className="inline-block border-2 border-white px-8 py-4 mb-12 md:mb-20">
+              <div className="inline-block border-2 border-white px-8 py-4 mb-7 md:mb-12">
                 <h2 className="font-serif text-4xl md:text-5xl font-light">
                   <TypewriterEffect text="Our History..." speed={120} />
                 </h2>
               </div>
               
               <p className="text-2xl md:text-3xl leading-relaxed">
-                French For New, founded in 2021 by DJ duo Nouveaux (Thubelihle Nkutha & Neo Mosito), is an events company driven by community and inclusion. From Soundset Sunday (2019) to A Rare Experience and Eclectic Sessions, they create immersive events that connect people and offer brands unique exposure.
+              French For New is an events company, founded at the twilight of the year 2021 and founded on the principle of community and togetherness. The brainchild of Thubelihle Nkutha & Neo Mosito who saw a gap for turning their love for music into an events company.
+              French For New is a company that centres its values and goals around the idea that each person who walks through our doors belongs and that they are coming to be part of a greater group. One that does not isolate and discriminate but rather looks to grow.
               </p>
             </div>
             
@@ -149,7 +265,7 @@ export default function AboutUs() {
             <div className="relative flex justify-center md:justify-end">
               <div className="relative rounded-lg overflow-hidden w-full md:w-[90%] aspect-[4/5] border-2 border-white">
                 <Image 
-                  src="/images/founders_1.jpeg" 
+                  src="/images/duo_founders.jpg" 
                   alt="DJ duo Nouveaux performing" 
                   fill
                   className="object-cover object-top"
@@ -157,10 +273,7 @@ export default function AboutUs() {
                   priority
                 />
                 
-                {/* Slide indicator */}
-                <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-sm text-sm">
-                  5/5
-                </div>
+
               </div>
             </div>
           </div>
@@ -172,19 +285,18 @@ export default function AboutUs() {
         <div className="w-full">
           <h2 className="font-serif text-5xl md:text-6xl text-center mb-16 md:mb-24 font-light">Meet the Team</h2>
           
-          <div className="overflow-x-auto scrollbar-hide">
-            <div 
-              id="team-scroll-container"
-              className="flex flex-row flex-nowrap px-6 md:px-12 lg:px-16 space-x-8"
-            >
+          <div 
+            ref={scrollContainerRef}
+            className="flex flex-row flex-nowrap px-6 md:px-12 lg:px-16 space-x-8 overflow-x-auto hide-scrollbar scroll-smooth"
+          >
               {/* Team Member 1 */}
-              <div className="w-full md:w-1/3 flex-shrink-0 px-4">
+              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Thubelihle Nkutha</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale">
+                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
                     <Image 
-                      src="/images/member_a.png" 
+                      src="/images/Thube.jpg" 
                       alt="Thubelihle Nkutha" 
                       fill
                       className="object-cover object-top"
@@ -192,19 +304,19 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Co Founder & CEO</p>
+                    <p className="text-sm font-medium">Co-Founder & CEO</p>
                   </div>
                 </div>
               </div>
               
               {/* Team Member 2 */}
-              <div className="w-full md:w-1/3 flex-shrink-0 px-4">
+              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Neo Mosito</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale">
+                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
                     <Image 
-                      src="/images/member_b.png" 
+                      src="/images/Neo.jpg" 
                       alt="Neo Mosito" 
                       fill
                       className="object-cover object-top"
@@ -212,19 +324,19 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Co Founder & CFO</p>
+                    <p className="text-sm font-medium">Co-Founder & CFO</p>
                   </div>
                 </div>
               </div>
               
               {/* Team Member 3 */}
-              <div className="w-full md:w-1/3 flex-shrink-0 px-4">
+              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Sango Velaphi</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale">
+                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
                     <Image 
-                      src="/images/member_c.png"
+                      src="/images/Sango.jpg"
                       alt="Sango Velaphi" 
                       fill
                       className="object-cover object-top"
@@ -238,13 +350,13 @@ export default function AboutUs() {
               </div>
               
               {/* Team Member 4 */}
-              <div className="w-full md:w-1/3 flex-shrink-0 px-4">
+              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
-                  <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Team Member</h3>
+                  <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Itumeleng Mosisili</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale">
+                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
                     <Image 
-                      src="/images/member_d.png"
+                      src="/images/Itu.jpg"
                       alt="Team member" 
                       fill
                       className="object-cover object-top"
@@ -252,22 +364,36 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Position Title</p>
+                    <p className="text-sm font-medium">Junior Operations Manager</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Team Member 5 */}
+              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
+                <div className="flex flex-col">
+                  <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Emihle January</h3>
+                  
+                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
+                    <Image 
+                      src="/images/Emihle.jpg"
+                      alt="Emihle" 
+                      fill
+                      className="object-cover object-top"
+                    />
+                  </div>
+                  
+                  <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
+                    <p className="text-sm font-medium">Social Media and Creative Lead</p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
           
           {/* Horizontal scroll controls */}
           <div className="flex justify-center mt-16 space-x-4">
             <button 
-              onClick={() => {
-                const container = document.getElementById('team-scroll-container');
-                if (container) {
-                  container.scrollBy({ left: -300, behavior: 'smooth' });
-                }
-              }}
+              onClick={scrollLeft}
               className="p-2 border border-white rounded-full hover:bg-white hover:text-black transition-colors"
               aria-label="Scroll left"
             >
@@ -276,12 +402,7 @@ export default function AboutUs() {
               </svg>
             </button>
             <button 
-              onClick={() => {
-                const container = document.getElementById('team-scroll-container');
-                if (container) {
-                  container.scrollBy({ left: 300, behavior: 'smooth' });
-                }
-              }}
+              onClick={scrollRight}
               className="p-2 border border-white rounded-full hover:bg-white hover:text-black transition-colors"
               aria-label="Scroll right"
             >

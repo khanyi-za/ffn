@@ -86,17 +86,28 @@ module.exports = {
         "mask-reveal": {
           "0%": { "background-position": "200% 0" },
           "100%": { "background-position": "0% 0" }
+        },
+        "ping-pulse": {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.3 }
+        },
+        "shimmer": {
+          "0%": { transform: "translateX(-150%)" },
+          "50%": { transform: "translateX(-60%)" },
+          "100%": { transform: "translateX(150%)" }
         }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "infinite-scroll": "infinite-scroll 40s linear infinite",
+        "infinite-scroll": "infinite-scroll 25s linear infinite",
         "bounce-once": "bounce-once 0.5s ease-in-out",
         "fade-in": "fade-in 1.5s ease-in-out forwards",
         "text-reveal": "text-reveal 2s ease-out forwards",
         "gradient-x": "gradient-x 4s ease-in-out infinite",
-        "mask-reveal": "mask-reveal 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards"
+        "mask-reveal": "mask-reveal 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards",
+        "ping-pulse": "ping 2s cubic-bezier(0, 0, 0.2, 1) infinite",
+        "shimmer": "shimmer 2s linear infinite"
       },
     },
   },

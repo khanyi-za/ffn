@@ -9,7 +9,6 @@ interface TypewriterEffectProps {
   speed?: number;
   restartDelay?: number;
   eraseSpeed?: number;
-  shouldLoop?: boolean;
   onComplete?: () => void;
 }
 
@@ -18,7 +17,6 @@ function TypewriterEffect({
   speed = 150, 
   restartDelay = 3000,
   eraseSpeed = 75,
-  shouldLoop = true,
   onComplete
 }: TypewriterEffectProps) {
   const [displayText, setDisplayText] = useState('')
@@ -105,10 +103,9 @@ function TypewriterEffect({
 
 export default function LogoCarousel() {
   const logoContainerRef = useRef<HTMLDivElement>(null)
-  const [showMission, setShowMission] = useState(false)
 
   const handleTitleComplete = () => {
-    setShowMission(true)
+    // Function is used by TypewriterEffect onComplete callback
   }
 
   return (
@@ -134,44 +131,46 @@ export default function LogoCarousel() {
           </p>
         </div>
 
-        {/* Logo Carousel animation */}
-        <div 
-          ref={logoContainerRef}
-          className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]"
-        >
-          {/* First instance of the logos */}
-          <ul className="flex items-center justify-center md:justify-start [&_li]:mx-8 [&_img]:max-w-none animate-infinite-scroll">
-            {logos.map((logo, index) => (
-              <li key={`logo-1-${index}`} className="px-8 flex items-center justify-center">
-                <div className="transition-all duration-300 hover:scale-110 group cursor-pointer">
-                  <Image 
-                    src={`/images/${logo.src}`} 
-                    alt={logo.alt} 
-                    width={124} 
-                    height={40} 
-                    className="brightness-0 invert max-h-12 w-auto group-hover:animate-bounce-once" 
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-          
-          {/* Duplicate instance of the logos - needed for continuous scrolling effect */}
-          <ul className="flex items-center justify-center md:justify-start [&_li]:mx-8 [&_img]:max-w-none animate-infinite-scroll" aria-hidden="true">
-            {logos.map((logo, index) => (
-              <li key={`logo-2-${index}`} className="px-8 flex items-center justify-center">
-                <div className="transition-all duration-300 hover:scale-110 group cursor-pointer">
-                  <Image 
-                    src={`/images/${logo.src}`} 
-                    alt={logo.alt} 
-                    width={124} 
-                    height={40} 
-                    className="brightness-0 invert max-h-12 w-auto group-hover:animate-bounce-once" 
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
+        {/* Logo Carousel animation with white background */}
+        <div className="bg-white py-3 rounded-xl">
+          <div 
+            ref={logoContainerRef}
+            className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_white_50px,_white_calc(100%-50px),transparent_100%)]"
+          >
+            {/* First instance of the logos */}
+            <ul className="flex items-center justify-center md:justify-start [&_li]:mx-2 [&_img]:max-w-none animate-infinite-scroll">
+              {logos.map((logo, index) => (
+                <li key={`logo-1-${index}`} className="px-2 flex items-center justify-center">
+                  <div className="transition-all duration-300 hover:scale-110 group cursor-pointer">
+                    <Image 
+                      src={logo.src} 
+                      alt={logo.alt} 
+                      width={100} 
+                      height={40} 
+                      className="max-h-12 w-auto group-hover:animate-bounce-once object-contain" 
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+            
+            {/* Duplicate instance of the logos - needed for continuous scrolling effect */}
+            <ul className="flex items-center justify-center md:justify-start [&_li]:mx-2 [&_img]:max-w-none animate-infinite-scroll" aria-hidden="true">
+              {logos.map((logo, index) => (
+                <li key={`logo-2-${index}`} className="px-2 flex items-center justify-center">
+                  <div className="transition-all duration-300 hover:scale-110 group cursor-pointer">
+                    <Image 
+                      src={logo.src} 
+                      alt={logo.alt} 
+                      width={100} 
+                      height={40} 
+                      className="max-h-12 w-auto group-hover:animate-bounce-once object-contain" 
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -180,12 +179,15 @@ export default function LogoCarousel() {
 
 // Logo data
 const logos = [
-  { src: 'facebook.svg', alt: 'Facebook' },
-  { src: 'disney.svg', alt: 'Disney' },
-  { src: 'airbnb.svg', alt: 'Airbnb' },
-  { src: 'apple.svg', alt: 'Apple' },
-  { src: 'spark.svg', alt: 'Spark' },
-  { src: 'samsung.svg', alt: 'Samsung' },
-  { src: 'quora.svg', alt: 'Quora' },
-  { src: 'sass.svg', alt: 'Sass' },
+  { src: '/Logos/BAI Logo_Lanyard.png', alt: 'BAI Logo' },
+  { src: '/Logos/Once Upon A Time .png', alt: 'Once Upon A Time' },
+  { src: '/Logos/TBNE LOGO.PNG', alt: 'TBNE' },
+  { src: '/Logos/Grants-Logo.png', alt: 'Grants' },
+  { src: '/Logos/don-julio-tequila-logo-3645080EB7-seeklogo.com.png', alt: 'Don Julio' },
+  { src: '/Logos/Casamigos-logo.png', alt: 'Casamigos' },
+  { src: '/Logos/jagermeister-logo-png-transparent.png', alt: 'Jagermeister' },
+  { src: '/Logos/gordons-1-logo-png-transparent.png', alt: 'Gordons' },
+  { src: '/Logos/Johnnie-Walker-Logo.png', alt: 'Johnnie Walker' },
+  { src: '/Logos/Kix logo.png', alt: 'Kix' },
+  { src: '/Logos/Flying_fish.png', alt: 'Flying Fish' },
 ]; 

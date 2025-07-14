@@ -43,7 +43,7 @@ export default function StatsSection() {
             <div className="rounded-3xl overflow-hidden border-2 border-white">
               <div className="relative w-full aspect-square md:aspect-[4/3.3]">
                 <Image 
-                  src="/images/dj_home_page.png" 
+                  src="/images/Dj_home_page.png" 
                   alt="DJ performing at an event with a crowd"
                   fill
                   className="object-cover rounded-2xl"

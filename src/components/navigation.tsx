@@ -64,6 +64,7 @@ export default function Navigation({ activePage = "" }) {
                       activePage === item.name ? "border border-white" : ""
                     } !font-sugar-magic`}
                     style={{ fontFamily: "var(--font-sugar-magic)" }}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {item.name}
                   </Link>

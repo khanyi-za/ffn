@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from "next/image"
-import Link from "next/link"
 import Navigation from "@/components/navigation"
 import Footer from "@/components/footer"
 import ServicesGrid from "@/components/services-grid"
+// import RecentCollaborations from "@/components/recent-collaborations"
 import ContactService from "@/components/contact-service"
 
 
@@ -47,6 +47,23 @@ export default function ServicesPage() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
+  const goToSlide = useCallback((index: number) => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setActiveIndex(index)
+    setTimeout(() => setIsTransitioning(false), 500) // Match this to the transition duration
+  }, [isTransitioning])
+
+  const goToNext = useCallback(() => {
+    const nextIndex = activeIndex === services.length - 1 ? 0 : activeIndex + 1
+    goToSlide(nextIndex)
+  }, [activeIndex, services.length, goToSlide])
+
+  const goToPrev = useCallback(() => {
+    const prevIndex = activeIndex === 0 ? services.length - 1 : activeIndex - 1
+    goToSlide(prevIndex)
+  }, [activeIndex, services.length, goToSlide])
+
   // Auto-rotate carousel
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,24 +71,7 @@ export default function ServicesPage() {
     }, 3000) // Change slide every 3 seconds
     
     return () => clearInterval(interval)
-  }, [activeIndex])
-
-  const goToSlide = (index: number) => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    setActiveIndex(index)
-    setTimeout(() => setIsTransitioning(false), 500) // Match this to the transition duration
-  }
-
-  const goToNext = () => {
-    const nextIndex = activeIndex === services.length - 1 ? 0 : activeIndex + 1
-    goToSlide(nextIndex)
-  }
-
-  const goToPrev = () => {
-    const prevIndex = activeIndex === 0 ? services.length - 1 : activeIndex - 1
-    goToSlide(prevIndex)
-  }
+  }, [goToNext])
 
   return (
     <main className="flex flex-col with-hero-nav">
@@ -94,8 +94,6 @@ export default function ServicesPage() {
                 sizes="100vw"
                 priority={index === 0}
               />
-              {/* Slight overlay for better text readability */}
-              <div className="absolute inset-0 bg-black/20"></div>
             </div>
           ))}
 
@@ -190,6 +188,9 @@ export default function ServicesPage() {
 
       {/* Services Detail Grid Section */}
       <ServicesGrid />
+
+      {/* Recent Collaborations Section */}
+      {/* <RecentCollaborations /> */}
 
       {/* Contact Service Section */}
       <ContactService />
