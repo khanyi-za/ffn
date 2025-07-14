@@ -213,10 +213,10 @@ export default function EventUpdates({
             <h3 className="text-lg font-serif italic mb-2">Shop</h3>
             <p className="font-mono">SOUNDSET SUNDAY MERCH.</p>
           </div>
-          <Link href="/shop" className="flex items-center mt-4 md:mt-0 group">
+          <div className="flex items-center mt-4 md:mt-0 group cursor-default">
             <span className="mr-2 font-medium uppercase">Explore Shop</span>
             <span className="group-hover:translate-x-1 transition-transform">&gt;</span>
-          </Link>
+          </div>
         </div>
 
         {/* Final Divider */}

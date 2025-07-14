@@ -7,7 +7,7 @@ import EventImagesRow from "@/components/event-images-row"
 import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from 'next/navigation'
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 
 // Define the type for event data
 type EventDataType = {
