@@ -17,7 +17,7 @@ export default function HomePageEvents({
     { src: "/row_images/jw-a.jpg", alt: "Event image 3" },
     { src: "/row_images/gdn-b.JPG", alt: "Event image 4" },
     { src: "/row_images/jw-b.JPG", alt: "Event image 5" },
-    { src: "/row_images/kix-a.JPG", alt: "Event image 6" },
+    { src: "/row_images/kix-a.jpg", alt: "Event image 6" },
   ]
 
   // State to track the starting index of the current 3 images

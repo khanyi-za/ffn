@@ -168,7 +168,7 @@ function EventsContent() {
       <div className="relative h-screen">
         <div className="absolute inset-0">
           <Image
-            src="/images/events_page_hero.png"
+            src="/images/landing_events_page.png"
             alt="Events page hero"
             fill
             className="object-cover"
