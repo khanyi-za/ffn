@@ -26,7 +26,7 @@ export default function Footer() {
 
           <div className="flex space-x-6">
             <Link
-              href="https://instagram.com"
+              href="https://www.instagram.com/french.for.new/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-gray-300"
@@ -51,7 +51,7 @@ export default function Footer() {
             </Link>
 
             <Link
-              href="https://x.com"
+              href="https://x.com/FrenchForNew"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-gray-300"
@@ -75,7 +75,7 @@ export default function Footer() {
             </Link>
 
             <Link
-              href="https://youtube.com"
+              href="https://www.youtube.com/@FrenchForNew"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-gray-300"
@@ -96,6 +96,29 @@ export default function Footer() {
                 <path d="m10 15 5-3-5-3z" />
               </svg>
               <span className="sr-only">YouTube</span>
+            </Link>
+
+            <Link
+              href="https://www.tiktok.com/@frenchfornew"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-gray-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide"
+              >
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+              </svg>
+              <span className="sr-only">TikTok</span>
             </Link>
           </div>
         </div>

@@ -105,6 +105,14 @@ function TypewriterEffect({
 }
 
 export default function UpcomingEvents() {
+  // Helper function to format display text
+  const formatDisplayText = (text: string) => {
+    if (text === "Electic Sessions") {
+      return "Eclectic Sessions";
+    }
+    return text;
+  };
+
   const events: Event[] = [
     {
       id: 1,
@@ -114,6 +122,7 @@ export default function UpcomingEvents() {
       location: "Democracy Bar, Illovo",
       link: "/events?event=electic-session"
     },
+    /*
     {
       id: 2,
       title: "SoundSet Sunday",
@@ -122,6 +131,7 @@ export default function UpcomingEvents() {
       location: "Parkview Event Space, Woodstock",
       link: "/events?event=soundset-sunday"
     }
+    */
   ]
 
   const [isMounted, setIsMounted] = useState(false)
@@ -231,15 +241,22 @@ export default function UpcomingEvents() {
 
                 {/* Event Details - Aligned to match the reference */}
                 <div className="flex flex-col justify-center md:justify-start flex-1">
-                  <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{event.title}</h3>
+                  <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{formatDisplayText(event.title)}</h3>
                   <p className="text-sm sm:text-base md:text-lg mb-1 font-mono">{event.date}</p>
                   <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 font-mono">{event.location}</p>
 
                   {/* Buttons - Sized to match the reference */}
                   <div className="flex gap-3 sm:gap-4">
                     <Link 
-                      href={`${event.link}/tickets`} 
+                      href={event.title === "Electic Sessions" ? "https://fixr.co/event/eclectic-sessions-tickets-406173760?region=za" : event.link} 
                       className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                      target={event.title === "Electic Sessions" ? "_blank" : "_self"}
+                      rel={event.title === "Electic Sessions" ? "noopener noreferrer" : ""}
+                      /* 
+                      href={event.title === "SoundSet Sunday" ? "https://fixr.co/event/soundset-sunday-x-cr8torcon-tickets-564111961?region=za" : event.link} 
+                      target={event.title === "SoundSet Sunday" ? "_blank" : "_self"}
+                      rel={event.title === "SoundSet Sunday" ? "noopener noreferrer" : ""}
+                      */
                     >
                       TICKETS
                     </Link>

@@ -244,18 +244,18 @@ export default function AboutUs() {
       </section>
       
       {/* Our History Section */}
-      <section className="h-screen flex items-center border-t border-gray-800">
-        <div className="w-full px-6 md:px-12 lg:px-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
+      <section className="py-16 md:py-20 lg:py-24 xl:py-28 border-t border-gray-800">
+        <div className="w-full px-4 sm:px-6 md:px-12 lg:px-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-16 lg:gap-24 items-center">
             {/* Left column - Text content */}
             <div className="max-w-xl">
-              <div className="inline-block border-2 border-white px-8 py-4 mb-7 md:mb-12">
-                <h2 className="font-serif text-4xl md:text-5xl font-light">
+              <div className="inline-block border-2 border-white px-6 sm:px-8 py-3 sm:py-4 mb-6 sm:mb-7 md:mb-12">
+                <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light">
                   <TypewriterEffect text="Our History..." speed={120} />
                 </h2>
               </div>
               
-              <p className="text-2xl md:text-3xl leading-relaxed">
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed">
               French For New is an events company, founded at the twilight of the year 2021 and founded on the principle of community and togetherness. The brainchild of Thubelihle Nkutha & Neo Mosito who saw a gap for turning their love for music into an events company.
               French For New is a company that centres its values and goals around the idea that each person who walks through our doors belongs and that they are coming to be part of a greater group. One that does not isolate and discriminate but rather looks to grow.
               </p>
@@ -285,10 +285,10 @@ export default function AboutUs() {
         <div className="w-full">
           <h2 className="font-serif text-5xl md:text-6xl text-center mb-16 md:mb-24 font-light">Meet the Team</h2>
           
-          <div 
+            <div 
             ref={scrollContainerRef}
             className="flex flex-row flex-nowrap px-6 md:px-12 lg:px-16 space-x-8 overflow-x-auto hide-scrollbar scroll-smooth"
-          >
+            >
               {/* Team Member 1 */}
               <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
@@ -385,10 +385,10 @@ export default function AboutUs() {
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
                     <p className="text-sm font-medium">Social Media and Creative Lead</p>
-                  </div>
                 </div>
               </div>
             </div>
+          </div>
           
           {/* Horizontal scroll controls */}
           <div className="flex justify-center mt-16 space-x-4">

@@ -67,7 +67,7 @@ export default function GalleryPage() {
 
   // State for individual image loading
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
-  
+
   // State for downloads
   const [downloadingImages, setDownloadingImages] = useState<Record<string, boolean>>({});
 
@@ -172,7 +172,7 @@ export default function GalleryPage() {
       setDownloadingImages(prev => ({ ...prev, [imageId]: false }));
     }
   }, []);
-
+  
   // Add scroll event listener for infinite scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -199,6 +199,17 @@ export default function GalleryPage() {
     };
   }, [loadMore, loading, hasMore]);
 
+  // Helper function to format display text
+  const formatDisplayText = (text: string) => {
+    if (text === "SoundSet Sunday") {
+      return "Soundset Sunday";
+    }
+    if (text === "Electic Sessions") {
+      return "Eclectic Sessions";
+    }
+    return text;
+  };
+
   // Custom dropdown component with white border
   const CustomDropdown = ({ 
     value, 
@@ -216,7 +227,7 @@ export default function GalleryPage() {
     <div className={`relative inline-block ${className}`}>
       <div className="relative">
         <div className={`flex items-center justify-between text-white border-2 border-white rounded-lg px-4 py-2 cursor-pointer ${isLarge ? 'text-5xl md:text-6xl font-serif' : 'text-lg md:text-xl'}`}>
-          <div>{value}</div>
+          <div>{formatDisplayText(value)}</div>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
@@ -228,7 +239,7 @@ export default function GalleryPage() {
         >
           {options.map(option => (
             <option key={option} value={option}>
-              {option}
+              {formatDisplayText(option)}
             </option>
           ))}
         </select>
@@ -438,42 +449,7 @@ export default function GalleryPage() {
             )}
           </div>
 
-          <div className="flex items-center space-x-6">
-            <button className="text-black/60 hover:text-black transition-colors">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-heart"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-              </svg>
-            </button>
-            <button className="text-black/60 hover:text-black transition-colors">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-more-vertical"
-              >
-                <circle cx="12" cy="12" r="1" />
-                <circle cx="12" cy="5" r="1" />
-                <circle cx="12" cy="19" r="1" />
-              </svg>
-            </button>
-          </div>
+
         </div>
       </div>
 
@@ -494,7 +470,7 @@ export default function GalleryPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-2 auto-rows-[10px]">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-2 auto-rows-[10px]">
                 {images.map(image => {
                   // Calculate row span based on aspect ratio
                   const rowSpan = image.aspectRatio === "tall" ? 40 : 

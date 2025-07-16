@@ -181,7 +181,6 @@ export default function LogoCarousel() {
 const logos = [
   { src: '/Logos/BAI Logo_Lanyard.png', alt: 'BAI Logo' },
   { src: '/Logos/Once Upon A Time .png', alt: 'Once Upon A Time' },
-  { src: '/Logos/TBNE LOGO.PNG', alt: 'TBNE' },
   { src: '/Logos/Grants-Logo.png', alt: 'Grants' },
   { src: '/Logos/don-julio-tequila-logo-3645080EB7-seeklogo.com.png', alt: 'Don Julio' },
   { src: '/Logos/Casamigos-logo.png', alt: 'Casamigos' },
