@@ -76,7 +76,7 @@ export default function ServicesPage() {
   return (
     <main className="flex flex-col with-hero-nav">
       {/* Services Section with Full-Screen Image */}
-      <div className="h-screen w-full overflow-hidden relative">
+      <div className="h-[75vh] md:h-screen w-full overflow-hidden relative">
         <div className="relative h-full w-full bg-black">
           {/* Background image carousel */}
           {services.map((service, index) => (
@@ -148,11 +148,18 @@ export default function ServicesPage() {
                 {services.map((service, index) => (
                   <h1 
                     key={service.id}
-                    className={`font-serif text-6xl md:text-7xl font-light text-white text-center transition-opacity duration-500 ease-in-out absolute left-0 right-0 ${
+                    className={`font-serif text-[51px] md:text-7xl font-light text-white text-center transition-opacity duration-500 ease-in-out absolute left-0 right-0 ${
                       activeIndex === index ? 'opacity-100' : 'opacity-0'
                     }`}
                   >
-                    {service.title}
+                    {service.title === "Talent Management" ? (
+                      <>
+                        <span className="md:hidden">Talent<br />Management</span>
+                        <span className="hidden md:inline">Talent Management</span>
+                      </>
+                    ) : (
+                      service.title
+                    )}
                   </h1>
                 ))}
               </div>

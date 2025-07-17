@@ -165,7 +165,7 @@ function EventsContent() {
       <Navigation activePage="EVENTS" />
 
       {/* Hero Section */}
-      <div className="relative h-screen">
+      <div className="relative h-[80vh] sm:min-h-screen">
         <div className="absolute inset-0">
           <Image
             src="/images/landing_events_page.png"
@@ -179,7 +179,7 @@ function EventsContent() {
         <div className="relative z-10 flex flex-col h-full text-center">
           {/* Title positioned at top */}
           <div className="pt-72">
-            <h1 className="text-3xl font-serif font-light text-white mb-14 border-2 border-white px-8 py-4 inline-block">
+            <h1 className="text-[25px] sm:text-3xl font-serif font-light text-white mb-[41px] sm:mb-14 border-2 border-white px-[23px] sm:px-8 py-[12px] sm:py-4 inline-block">
               Our Events
             </h1>
           </div>
@@ -187,11 +187,11 @@ function EventsContent() {
           {/* Cards positioned in center-bottom area */}
           <div className="flex-1 flex flex-col items-center justify-center">
             {/* Event Cards */}
-            <div className="flex gap-8 mb-12">
+            <div className="flex gap-[23px] sm:gap-8 mb-[35px] sm:mb-12">
               {/* SoundSet Sunday */}
-              <div className="w-32 text-center">
+              <div className="w-[93px] sm:w-32 text-center">
                 <Link href="/events?event=soundset-sunday" onClick={handleEventCardClick}>
-                  <div className={`relative w-full h-32 mb-4 ${selectedEvent === "soundset-sunday" ? "border-4 border-white" : "border-4 border-black"} rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-105`}>
+                  <div className={`relative w-full h-[93px] sm:h-32 mb-[12px] sm:mb-4 ${selectedEvent === "soundset-sunday" ? "border-4 border-white" : "border-4 border-black"} rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-105`}>
                     <Image
                       src="/event_logos/Soundset.png"
                       alt="SoundSet Sunday"
@@ -200,13 +200,13 @@ function EventsContent() {
                     />
                   </div>
                 </Link>
-                <h3 className="text-sm font-serif font-light">Soundset Sunday</h3>
+                <h3 className="text-[10px] sm:text-sm font-serif font-light">Soundset Sunday</h3>
               </div>
 
               {/* RARE */}
-              <div className="w-32 text-center">
+              <div className="w-[93px] sm:w-32 text-center">
                 <Link href="/events?event=rare" onClick={handleEventCardClick}>
-                  <div className={`relative w-full h-32 mb-4 ${selectedEvent === "rare" ? "border-4 border-white" : "border-4 border-black"} rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-105`}>
+                  <div className={`relative w-full h-[93px] sm:h-32 mb-[12px] sm:mb-4 ${selectedEvent === "rare" ? "border-4 border-white" : "border-4 border-black"} rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-105`}>
                     <Image
                       src="/event_logos/Rare.png"
                       alt="RARE"
@@ -215,13 +215,13 @@ function EventsContent() {
                     />
                   </div>
                 </Link>
-                <h3 className="text-sm font-serif font-light">RARE</h3>
+                <h3 className="text-[10px] sm:text-sm font-serif font-light">RARE</h3>
               </div>
 
               {/* Eclectic Session */}
-              <div className="w-32 text-center">
+              <div className="w-[93px] sm:w-32 text-center">
                 <Link href="/events?event=electic-session" onClick={handleEventCardClick}>
-                  <div className={`relative w-full h-32 mb-4 ${selectedEvent === "electic-session" ? "border-4 border-white" : "border-4 border-black"} rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-105`}>
+                  <div className={`relative w-full h-[93px] sm:h-32 mb-[12px] sm:mb-4 ${selectedEvent === "electic-session" ? "border-4 border-white" : "border-4 border-black"} rounded-2xl overflow-hidden bg-black transition-all duration-300 hover:scale-105`}>
                     <Image
                       src="/event_logos/Electic_Sessions.png"
                       alt="Eclectic Session"
@@ -230,20 +230,20 @@ function EventsContent() {
                     />
                   </div>
                 </Link>
-                <h3 className="text-sm font-serif font-light">{formatDisplayText("Electic Sessions")}</h3>
+                <h3 className="text-[10px] sm:text-sm font-serif font-light">{formatDisplayText("Electic Sessions")}</h3>
               </div>
             </div>
 
             {/* More Info */}
-            <div className="pb-16">
-              <p className="mb-4 text-lg">More Info</p>
+            <div className="pb-[47px] sm:pb-16">
+              <p className="mb-[12px] sm:mb-4 text-[13px] sm:text-lg">More Info</p>
               <svg
-                width="80"
-                height="40"
+                width="58"
+                height="29"
                 viewBox="0 0 100 50"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="stroke-white stroke-2 mx-auto animate-bounce"
+                className="sm:w-[80px] sm:h-[40px] stroke-white stroke-2 mx-auto animate-bounce"
               >
                 <path d="M5 5 L50 45 L95 5" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

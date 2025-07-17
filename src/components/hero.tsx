@@ -17,7 +17,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+    <div className="relative h-[75vh] sm:min-h-screen w-full overflow-hidden bg-black">
       {/* Background image 1 with responsive adjustments */}
       <div 
         className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${
@@ -156,7 +156,7 @@ export default function Hero() {
       <Navigation activePage="HOME" />
 
       {/* Main Hero Content */}
-      <div className="relative z-10 flex flex-col justify-between h-screen">
+      <div className="relative z-10 flex flex-col justify-between h-[75vh] sm:h-screen">
         {/* Upper spacing to accommodate fixed navbar */}
         <div className="h-[var(--navbar-height)]"></div>
         
@@ -164,7 +164,7 @@ export default function Hero() {
         <div className="flex-grow flex flex-col justify-center px-6 md:px-12 pt-[20vh]">
           {/* First tagline - shows when first hero is active */}
           <h1 
-            className={`font-serif text-[31px] md:text-[36px] font-light text-white max-w-md leading-tight transition-opacity duration-1000 ease-in-out ${
+            className={`font-serif text-[25px] md:text-[36px] font-light text-white max-w-md leading-tight transition-opacity duration-1000 ease-in-out ${
               activeHero === 1 ? 'opacity-100' : 'opacity-0'
             }`}
           >
@@ -175,7 +175,7 @@ export default function Hero() {
 
           {/* Second tagline - shows when second hero is active */}
           <h1 
-            className={`font-serif text-[23px] md:text-[32px] font-light text-white max-w-xl leading-tight absolute transition-opacity duration-1000 ease-in-out ${
+            className={`font-serif text-[18px] md:text-[32px] font-light text-white max-w-xl leading-tight absolute transition-opacity duration-1000 ease-in-out ${
               activeHero === 2 ? 'opacity-100' : 'opacity-0'
             }`}
           >

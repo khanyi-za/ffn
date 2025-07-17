@@ -63,7 +63,7 @@ export default function GalleryPage() {
   // Pagination state
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const imagesPerPage = 12;
+  const imagesPerPage = 24; // Increased from 12 to 24 for better loading efficiency
 
   // State for individual image loading
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
@@ -71,9 +71,19 @@ export default function GalleryPage() {
   // State for downloads
   const [downloadingImages, setDownloadingImages] = useState<Record<string, boolean>>({});
 
+  // State for prefetching
+  const [isPrefetching, setIsPrefetching] = useState(false);
+  const [connectionSpeed, setConnectionSpeed] = useState<'slow' | 'fast'>('fast');
+
   // Track when an image finishes loading
   const handleImageLoaded = useCallback((id: string) => {
     setLoadedImages(prev => ({ ...prev, [id]: true }));
+  }, []);
+
+  // Handle image loading
+  const handleImageError = useCallback((imageId: string) => {
+    // Mark as loaded even if there's an error to prevent infinite retries
+    handleImageLoaded(imageId);
   }, []);
 
   // Reset pagination when gallery parameters change
@@ -132,10 +142,10 @@ export default function GalleryPage() {
       }
     };
     
-    // Debounce the API call to avoid hammering the server
+    // Debounce the API call to avoid hammering the server (reduced from 300ms to 100ms)
     const timer = setTimeout(() => {
       fetchImages();
-    }, 300);
+    }, 100);
     
     return () => clearTimeout(timer);
   }, [activeEvent, activeDate, activePhotographer, photographerOptions.length, page]);
@@ -146,6 +156,54 @@ export default function GalleryPage() {
       setPage(prevPage => prevPage + 1);
     }
   }, [loading, hasMore]);
+
+  // Prefetch next page in background
+  const prefetchNextPage = useCallback(async () => {
+    if (isPrefetching || !hasMore || !activeEvent || !activeDate) return;
+    
+    setIsPrefetching(true);
+    try {
+      let url = `/api/s3-images?event=${encodeURIComponent(activeEvent)}&date=${encodeURIComponent(activeDate)}`;
+      
+      if (activePhotographer) {
+        url += `&photographer=${encodeURIComponent(activePhotographer)}`;
+      }
+      
+      // Prefetch next page
+      url += `&page=${page + 1}&limit=${imagesPerPage}`;
+      
+      const response = await fetchWithRetry(url);
+      if (response.ok) {
+        const data: S3ApiResponse = await response.json();
+        // Pre-cache the images by creating Image objects (but don't display them yet)
+        data.images.forEach(img => {
+          const image = document.createElement('img');
+          image.src = img.src;
+        });
+      }
+    } catch (error) {
+      console.log('Prefetch failed:', error);
+    } finally {
+      setIsPrefetching(false);
+    }
+  }, [isPrefetching, hasMore, activeEvent, activeDate, activePhotographer, page, imagesPerPage]);
+
+  // Detect connection speed
+  useEffect(() => {
+    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    if (connection) {
+      const updateConnectionSpeed = () => {
+        // Consider slow if effective type is slow-2g, 2g, or 3g
+        const slowTypes = ['slow-2g', '2g', '3g'];
+        setConnectionSpeed(slowTypes.includes(connection.effectiveType) ? 'slow' : 'fast');
+      };
+      
+      updateConnectionSpeed();
+      connection.addEventListener('change', updateConnectionSpeed);
+      
+      return () => connection.removeEventListener('change', updateConnectionSpeed);
+    }
+  }, []);
 
   // Download individual image
   const downloadImage = useCallback(async (imageUrl: string, imageName: string, imageId: string) => {
@@ -173,31 +231,61 @@ export default function GalleryPage() {
     }
   }, []);
   
-  // Add scroll event listener for infinite scroll
+  // Add intersection observer for better performance than scroll events
   useEffect(() => {
-    const handleScroll = () => {
-      if (loading) return; // Don't trigger more loads while loading
-      
-      if (
-        window.innerHeight + document.documentElement.scrollTop >= 
-        document.documentElement.offsetHeight - 800 && hasMore
-      ) {
-        // Debounce the load more action
-        const timer = setTimeout(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && hasMore && !loading) {
           loadMore();
-        }, 300);
-        
-        return () => clearTimeout(timer);
+        }
+      },
+      {
+        rootMargin: '1200px', // Increased from 800px to 1200px for earlier loading
       }
-    };
+    );
+
+    // Create and observe a sentinel element
+    const sentinel = document.createElement('div');
+    sentinel.style.height = '1px';
+    sentinel.style.position = 'absolute';
+    sentinel.style.bottom = '1200px';
+    sentinel.style.width = '100%';
+    sentinel.style.pointerEvents = 'none';
     
-    const debouncedHandleScroll = debounce(handleScroll, 200);
-    window.addEventListener('scroll', debouncedHandleScroll);
-    
+    document.body.appendChild(sentinel);
+    observer.observe(sentinel);
+
     return () => {
-      window.removeEventListener('scroll', debouncedHandleScroll);
+      observer.disconnect();
+      document.body.removeChild(sentinel);
     };
   }, [loadMore, loading, hasMore]);
+
+  // Prefetch trigger - when user is halfway through current images
+  useEffect(() => {
+    if (images.length > 0 && images.length >= imagesPerPage / 2) {
+      const prefetchTrigger = Math.ceil(images.length * 0.6); // Trigger at 60% through current images
+      
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const target = entries[0];
+          if (target.isIntersecting && !isPrefetching) {
+            prefetchNextPage();
+          }
+        },
+        { rootMargin: '500px' }
+      );
+
+      // Find the image at the prefetch trigger point
+      const triggerElement = document.querySelector(`[data-image-index="${prefetchTrigger}"]`);
+      if (triggerElement) {
+        observer.observe(triggerElement);
+      }
+
+      return () => observer.disconnect();
+    }
+  }, [images.length, isPrefetching, prefetchNextPage, imagesPerPage]);
 
   // Helper function to format display text
   const formatDisplayText = (text: string) => {
@@ -226,7 +314,7 @@ export default function GalleryPage() {
   }) => (
     <div className={`relative inline-block ${className}`}>
       <div className="relative">
-        <div className={`flex items-center justify-between text-white border-2 border-white rounded-lg px-4 py-2 cursor-pointer ${isLarge ? 'text-5xl md:text-6xl font-serif' : 'text-lg md:text-xl'}`}>
+        <div className={`flex items-center justify-between text-white border-2 border-white rounded-lg px-4 py-2 cursor-pointer ${isLarge ? 'text-[32px] md:text-6xl font-serif' : 'text-[14px] md:text-xl'}`}>
           <div>{formatDisplayText(value)}</div>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
             <polyline points="6 9 12 15 18 9"></polyline>
@@ -413,7 +501,7 @@ export default function GalleryPage() {
             {/* Gallery Button */}
             <Link
               href="/gallery"
-              className="border-2 border-white text-white px-8 py-3 text-lg md:text-xl font-medium tracking-wider hover:bg-white hover:text-black transition-colors inline-block rounded-lg"
+              className="border-2 border-white text-white px-8 py-3 text-[12px] md:text-xl font-medium tracking-wider hover:bg-white hover:text-black transition-colors inline-block rounded-lg"
             >
               GALLERY
             </Link>
@@ -425,7 +513,7 @@ export default function GalleryPage() {
       <div className="backdrop-blur-md bg-white/30 py-4 px-6 md:px-12 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex space-x-12 overflow-x-auto pb-2 hide-scrollbar">
-            <h2 className="font-mono text-black font-semibold whitespace-nowrap">
+            <h2 className="font-mono text-black font-semibold whitespace-nowrap text-[15px] md:text-base">
               Photographers
             </h2>
 
@@ -434,7 +522,7 @@ export default function GalleryPage() {
               photographerOptions.map(photographer => (
                 <button 
                   key={photographer}
-                  className={`font-mono whitespace-nowrap pb-1 transition-colors ${
+                  className={`font-mono whitespace-nowrap pb-1 transition-colors text-[12px] md:text-base ${
                     activePhotographer === photographer 
                       ? "text-black border-2 border-black px-4 py-1 rounded-lg" 
                       : "text-black/60 hover:text-black hover:border-b hover:border-black"
@@ -471,7 +559,7 @@ export default function GalleryPage() {
           ) : (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-2 auto-rows-[10px]">
-                {images.map(image => {
+                {images.map((image, index) => {
                   // Calculate row span based on aspect ratio
                   const rowSpan = image.aspectRatio === "tall" ? 40 : 
                                 image.aspectRatio === "wide" ? 20 : 30;
@@ -480,6 +568,7 @@ export default function GalleryPage() {
                     <div 
                       key={image.id} 
                       className="relative"
+                      data-image-index={index}
                       style={{
                         gridRow: `span ${rowSpan}`,
                       }}
@@ -489,14 +578,24 @@ export default function GalleryPage() {
                         image.aspectRatio === "tall" ? "aspect-[3/4]" :
                         "aspect-[16/9]"
                       } bg-gray-100 overflow-hidden rounded-lg relative group cursor-pointer`}>
-                        {/* Show loading skeleton until image loads */}
+                        {/* Show progressive loading with blurred placeholder */}
                         {!loadedImages[image.id] && (
                           <div className="absolute inset-0 bg-gray-200 rounded-lg overflow-hidden">
+                            {/* Blurred placeholder */}
                             <div 
-                              className="absolute inset-0 bg-gradient-to-r from-gray-200 via-white to-gray-200"
+                              className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 opacity-60"
                               style={{
                                 backgroundSize: '200% 100%',
-                                animation: 'shimmerEffect 2s infinite linear'
+                                animation: 'shimmerEffect 1.5s infinite linear'
+                              }}
+                            />
+                            {/* Shimmer effect */}
+                            <div 
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40"
+                              style={{
+                                backgroundSize: '200% 100%',
+                                animation: 'shimmerEffect 2s infinite linear',
+                                animationDelay: '0.5s'
                               }}
                             />
                             <style jsx>{`
@@ -508,7 +607,7 @@ export default function GalleryPage() {
                           </div>
                         )}
                         
-                        {/* Replace img with Next.js Image component */}
+                        {/* Next.js Image component - now globally unoptimized */}
                         <Image
                           src={image.src}
                           alt={image.name}
@@ -519,13 +618,14 @@ export default function GalleryPage() {
                               : 'opacity-0'
                           }`}
                           onLoadingComplete={() => handleImageLoaded(image.id)}
-                          onError={() => {
-                            // Mark as loaded even if there's an error to prevent infinite retries
-                            handleImageLoaded(image.id);
-                          }}
-                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                          loading="lazy"
-                          unoptimized={true} // Skip Next.js image optimization for large images
+                          onError={() => handleImageError(image.id)}
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                          loading={index < 8 ? "eager" : "lazy"} // Load first 8 images eagerly
+                          // Add timeout-related quality settings
+                          quality={connectionSpeed === 'slow' ? 75 : 85}
+                          placeholder="blur"
+                          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                          priority={index < 4} // Prioritize first 4 images
                         />
                         
                         {/* Download overlay - shows on hover */}

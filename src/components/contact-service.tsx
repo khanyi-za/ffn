@@ -22,7 +22,7 @@ export default function ContactService() {
       <div className="relative h-full flex flex-col">
         {/* Text Container - Top Half */}
         <div className="h-[35vh] pt-12 px-6 md:px-8 lg:px-12">
-          <h2 className="font-serif text-[2rem] md:text-[2.75rem] lg:text-[3.25rem] xl:text-[3.75rem] 
+          <h2 className="font-serif text-[1.69rem] md:text-[2.75rem] lg:text-[3.25rem] xl:text-[3.75rem] 
             text-white font-light leading-[1.05] tracking-normal max-w-[70%] lg:max-w-[65%]">
             From seamless planning to top&#8209;tier talent and impactful marketing, we transform events into immersive atmospheres. Partner with us — let’s bring your vision to life.
           </h2>
@@ -33,7 +33,7 @@ export default function ContactService() {
           <div className="relative group">
             <Link 
               href="/contact"
-              className="inline-block border-2 border-white text-white text-lg px-10 py-3 
+              className="inline-block border-2 border-white text-white text-[15px] md:text-lg px-10 py-3 
                 hover:bg-white hover:text-black transition-all duration-300"
             >
               Connect with us.

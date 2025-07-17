@@ -287,14 +287,14 @@ export default function AboutUs() {
           
             <div 
             ref={scrollContainerRef}
-            className="flex flex-row flex-nowrap px-6 md:px-12 lg:px-16 space-x-8 overflow-x-auto hide-scrollbar scroll-smooth"
+            className="flex flex-row flex-nowrap px-6 md:px-12 lg:px-16 space-x-8 md:space-x-5 overflow-x-auto hide-scrollbar scroll-smooth"
             >
               {/* Team Member 1 */}
-              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
+              <div className="w-[70vw] md:w-[30vw] lg:w-[25vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Thubelihle Nkutha</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
+                  <div className="relative aspect-[3/4] mb-4 md:grayscale md:hover:grayscale-0 transition-all duration-300">
                     <Image 
                       src="/images/Thube.jpg" 
                       alt="Thubelihle Nkutha" 
@@ -310,11 +310,11 @@ export default function AboutUs() {
               </div>
               
               {/* Team Member 2 */}
-              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
+              <div className="w-[70vw] md:w-[30vw] lg:w-[25vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Neo Mosito</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
+                  <div className="relative aspect-[3/4] mb-4 md:grayscale md:hover:grayscale-0 transition-all duration-300">
                     <Image 
                       src="/images/Neo.jpg" 
                       alt="Neo Mosito" 
@@ -330,11 +330,11 @@ export default function AboutUs() {
               </div>
               
               {/* Team Member 3 */}
-              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
+              <div className="w-[70vw] md:w-[30vw] lg:w-[25vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Sango Velaphi</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
+                  <div className="relative aspect-[3/4] mb-4 md:grayscale md:hover:grayscale-0 transition-all duration-300">
                     <Image 
                       src="/images/Sango.jpg"
                       alt="Sango Velaphi" 
@@ -350,11 +350,11 @@ export default function AboutUs() {
               </div>
               
               {/* Team Member 4 */}
-              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
+              <div className="w-[70vw] md:w-[30vw] lg:w-[25vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Itumeleng Mosisili</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
+                  <div className="relative aspect-[3/4] mb-4 md:grayscale md:hover:grayscale-0 transition-all duration-300">
                     <Image 
                       src="/images/Itu.jpg"
                       alt="Team member" 
@@ -370,11 +370,11 @@ export default function AboutUs() {
               </div>
               
               {/* Team Member 5 */}
-              <div className="w-[85vw] md:w-[35vw] lg:w-[30vw] flex-shrink-0 px-4">
+              <div className="w-[70vw] md:w-[30vw] lg:w-[25vw] flex-shrink-0 px-4">
                 <div className="flex flex-col">
                   <h3 className="text-2xl md:text-3xl font-serif mb-8 text-center md:text-left">Emihle January</h3>
                   
-                  <div className="relative aspect-[3/4] mb-4 grayscale hover:grayscale-0 transition-all duration-300">
+                  <div className="relative aspect-[3/4] mb-4 md:grayscale md:hover:grayscale-0 transition-all duration-300">
                     <Image 
                       src="/images/Emihle.jpg"
                       alt="Emihle" 

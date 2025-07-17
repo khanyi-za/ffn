@@ -25,6 +25,20 @@ export default function Navigation({ activePage = "" }) {
     setIsMenuOpen(!isMenuOpen)
   }
 
+  // Prevent scrolling when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMenuOpen])
+
   const navItems = [
     { name: "HOME", path: "/" },
     { name: "ABOUT US", path: "/about-us" },
@@ -36,12 +50,12 @@ export default function Navigation({ activePage = "" }) {
 
   return (
     <header className={`fixed w-full top-0 left-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-black/90 backdrop-blur-sm py-2' : 'bg-transparent py-5'
+      scrolled ? 'bg-black/90 backdrop-blur-sm py-1 md:py-2' : 'bg-transparent py-3 md:py-5'
     }`}>
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="flex items-center relative">
           {/* Logo kept in the same position but made smaller */}
-          <div className="w-32 -ml-4 -mt-1">
+          <div className="w-[102px] md:w-32 -ml-4 -mt-1">
             <Link href="/">
               <Image
                 src="/images/french_white_logo.svg"
@@ -76,15 +90,15 @@ export default function Navigation({ activePage = "" }) {
           {/* Mobile Menu Button - Kept at far right */}
           <button 
             onClick={toggleMenu} 
-            className="block md:hidden text-white z-50 ml-auto -mt-1"
+            className="block md:hidden text-white z-50 ml-auto -mt-1 p-2 touch-manipulation"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -99,8 +113,8 @@ export default function Navigation({ activePage = "" }) {
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -120,15 +134,15 @@ export default function Navigation({ activePage = "" }) {
       
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black z-40 md:hidden">
-          <div className="flex flex-col items-center justify-center h-full">
-            <ul className="flex flex-col space-y-12 text-white text-center">
+        <div className="fixed inset-0 bg-black z-40 md:hidden min-h-screen w-full">
+          <div className="flex flex-col items-center justify-center h-screen">
+            <ul className="flex flex-col space-y-[38px] text-white text-center">
               {navItems.map((item) => (
                 <li key={item.name}>
                   <Link
                     href={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`text-2xl tracking-wider hover:text-gray-300 transition-colors px-4 py-2 ${
+                    className={`text-[19px] tracking-wider hover:text-gray-300 transition-colors px-4 py-2 touch-manipulation ${
                       activePage === item.name ? "border border-white" : ""
                     } !font-sugar-magic`}
                     style={{ fontFamily: "var(--font-sugar-magic)" }}

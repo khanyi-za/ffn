@@ -17,7 +17,7 @@ export default function AboutHero() {
   }, [])
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+    <div className="relative h-[75vh] sm:min-h-screen w-full overflow-hidden bg-black">
       {/* Background image 1 - Simplified responsive system */}
       <div 
         className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${
@@ -54,9 +54,9 @@ export default function AboutHero() {
       <Navigation activePage="ABOUT US" />
 
       {/* Main Hero Content */}
-      <div className="relative z-10 flex flex-col h-screen items-start justify-end px-4 sm:px-6 md:px-12 lg:px-16 pb-12 sm:pb-16 md:pb-20 lg:pb-24 xl:pb-28">
+      <div className="relative z-10 flex flex-col h-[75vh] sm:h-screen items-start justify-end px-4 sm:px-6 md:px-12 lg:px-16 pb-12 sm:pb-16 md:pb-20 lg:pb-24 xl:pb-28">
         <div className="mb-0">
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-tight">
+          <h1 className="font-serif text-[38px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-tight">
             ABOUT US
           </h1>
           <div className="mt-4 sm:mt-6 md:mt-8">
@@ -65,7 +65,7 @@ export default function AboutHero() {
               alt="French for New Logo"
               width={120}
               height={53}
-              className="object-contain sm:w-[140px] sm:h-[62px] md:w-[180px] md:h-[80px] lg:w-[200px] lg:h-[89px]"
+              className="object-contain sm:w-[140px] sm:h-[62px] md:w-[216px] md:h-[96px] lg:w-[240px] lg:h-[107px]"
             />
           </div>
         </div>

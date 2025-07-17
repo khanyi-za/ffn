@@ -44,8 +44,8 @@ const s3Client = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_
 // CloudFront domain
 const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || '';
 
-// Add API response caching
-const CACHE_DURATION = 3600; // 1 hour in seconds
+// Add API response caching - Extended to 24 hours for better performance
+const CACHE_DURATION = 86400; // 24 hours in seconds (increased from 1 hour)
 const apiCache: Record<string, CachedData> = {};
 
 // Helper function to create proper CloudFront URL
@@ -63,6 +63,15 @@ function createCloudFrontUrl(key: string): string {
   } else {
     return `https://${CLOUDFRONT_DOMAIN}/${encodedKey}`;
   }
+}
+
+// Helper function to filter out specific dates for certain events
+function filterDatesByEvent(folders: string[], event?: string): string[] {
+  if (event === 'SoundSet Sunday') {
+    // Filter out "6 January 2025" for SoundSet Sunday
+    return folders.filter(folder => folder !== '6 January 2025');
+  }
+  return folders;
 }
 
 // Function to generate mock data from local files (fallback for development)
@@ -97,9 +106,12 @@ async function getMockGalleryData(
     if (!date) {
       if (!fs.existsSync(scanDir)) {
         // Mock dates if event folder doesn't exist
+        let mockDates = ['09 February 2025', '10 March 2025', '15 April 2025'];
+        // Apply filtering based on event
+        mockDates = filterDatesByEvent(mockDates, event);
         return { 
           images: [], 
-          folders: ['09 February 2025', '10 March 2025', '15 April 2025'] 
+          folders: mockDates 
         };
       }
       
@@ -107,7 +119,10 @@ async function getMockGalleryData(
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
       
-      return { images: [], folders: dates };
+      // Apply filtering based on event
+      const filteredDates = filterDatesByEvent(dates, event);
+      
+      return { images: [], folders: filteredDates };
     }
     
     // List all photographers for a date
@@ -230,8 +245,11 @@ export async function GET(request: NextRequest) {
     if (apiCache[cacheKey] && now - apiCache[cacheKey].timestamp < CACHE_DURATION * 1000) {
       return NextResponse.json(apiCache[cacheKey].data, {
         headers: {
-          'Cache-Control': `public, max-age=${CACHE_DURATION}`,
-          'X-Cache': 'HIT'
+          'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+          'X-Cache': 'HIT',
+          'ETag': `"${cacheKey}-${apiCache[cacheKey].timestamp}"`,
+          'Last-Modified': new Date(apiCache[cacheKey].timestamp).toUTCString(),
+          'Vary': 'Accept-Encoding'
         }
       });
     }
@@ -249,7 +267,7 @@ export async function GET(request: NextRequest) {
       
       const response: S3ApiResponse = {
         images: mockData.images,
-        folders: mockData.folders,
+        folders: mockData.folders, // filtering already applied in getMockGalleryData
         prefix: '',
         source: 'local',
         page,
@@ -262,8 +280,11 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.json(response, {
         headers: {
-          'Cache-Control': `public, max-age=${CACHE_DURATION}`,
-          'X-Cache': 'MISS'
+          'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+          'X-Cache': 'MISS',
+          'ETag': `"${cacheKey}-${now}"`,
+          'Last-Modified': new Date(now).toUTCString(),
+          'Vary': 'Accept-Encoding'
         }
       });
     }
@@ -327,9 +348,12 @@ export async function GET(request: NextRequest) {
         });
       }
       
+             // Apply filtering based on event
+       const filteredFolders = filterDatesByEvent(folders, event || undefined);
+
       const responseData: S3ApiResponse = {
         images: paginatedImages,
-        folders,
+        folders: filteredFolders,
         prefix,
         source: 's3',
         page,
@@ -342,8 +366,11 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.json(responseData, {
         headers: {
-          'Cache-Control': `public, max-age=${CACHE_DURATION}`,
-          'X-Cache': 'MISS'
+          'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+          'X-Cache': 'MISS',
+          'ETag': `"${cacheKey}-${now}"`,
+          'Last-Modified': new Date(now).toUTCString(),
+          'Vary': 'Accept-Encoding'
         }
       });
     } catch (error) {
