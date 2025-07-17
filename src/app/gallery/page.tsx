@@ -5,7 +5,6 @@ import Navigation from "@/components/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
-import debounce from "lodash/debounce"
 
 interface ImageData {
   id: string;
@@ -84,7 +83,7 @@ export default function GalleryPage() {
   const handleImageError = useCallback((imageId: string) => {
     // Mark as loaded even if there's an error to prevent infinite retries
     handleImageLoaded(imageId);
-  }, []);
+  }, [handleImageLoaded]);
 
   // Reset pagination when gallery parameters change
   useEffect(() => {
@@ -190,18 +189,40 @@ export default function GalleryPage() {
 
   // Detect connection speed
   useEffect(() => {
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    // Define connection interface for Network Information API
+    interface NetworkConnection {
+      effectiveType?: string;
+      addEventListener?: (type: string, listener: () => void) => void;
+      removeEventListener?: (type: string, listener: () => void) => void;
+    }
+    
+    interface NavigatorWithConnection extends Navigator {
+      connection?: NetworkConnection;
+      mozConnection?: NetworkConnection;
+      webkitConnection?: NetworkConnection;
+    }
+    
+    const nav = navigator as NavigatorWithConnection;
+    const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
     if (connection) {
       const updateConnectionSpeed = () => {
         // Consider slow if effective type is slow-2g, 2g, or 3g
         const slowTypes = ['slow-2g', '2g', '3g'];
-        setConnectionSpeed(slowTypes.includes(connection.effectiveType) ? 'slow' : 'fast');
+        const effectiveType = connection.effectiveType || 'unknown';
+        setConnectionSpeed(slowTypes.includes(effectiveType) ? 'slow' : 'fast');
       };
       
       updateConnectionSpeed();
-      connection.addEventListener('change', updateConnectionSpeed);
       
-      return () => connection.removeEventListener('change', updateConnectionSpeed);
+      if (connection.addEventListener) {
+        connection.addEventListener('change', updateConnectionSpeed);
+      }
+      
+      return () => {
+        if (connection.removeEventListener) {
+          connection.removeEventListener('change', updateConnectionSpeed);
+        }
+      };
     }
   }, []);
 
