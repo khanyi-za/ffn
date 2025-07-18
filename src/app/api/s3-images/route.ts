@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { NextRequest } from 'next/server';
+import { getCachedGalleryData } from '../cron/refresh-gallery-data/route';
 
 // Define types for cached data
 interface CachedData {
@@ -15,7 +16,7 @@ interface S3ApiResponse {
   images: ImageData[];
   folders: string[];
   prefix: string;
-  source: 'local' | 's3';
+  source: 'local' | 's3' | 'cached';
   page?: number;
   limit?: number;
   total?: number;
@@ -240,9 +241,107 @@ export async function GET(request: NextRequest) {
     // Create a cache key based on the request URL
     const cacheKey = request.url;
     
-    // Check if we have a valid cached response
+    // PRIORITY 1: Try to get data from the cron job cache (fastest)
+    const cachedGalleryData = await getCachedGalleryData();
+    if (cachedGalleryData) {
+      console.log('Using cached gallery data from cron job');
+      
+      // Handle different request types based on parameters
+      if (!event) {
+        // Return all events
+        return NextResponse.json({
+          images: [],
+          folders: cachedGalleryData.events,
+          prefix: '',
+          source: 'cached',
+          page,
+          limit
+        } as S3ApiResponse, {
+          headers: {
+            'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+            'X-Cache': 'HIT-CRON',
+            'ETag': `"cached-${cachedGalleryData.lastUpdated}"`,
+            'Last-Modified': new Date(cachedGalleryData.lastUpdated).toUTCString(),
+            'Vary': 'Accept-Encoding'
+          }
+        });
+      }
+      
+      if (!date) {
+        // Return all dates for the event
+        const dates = cachedGalleryData.dates[event] || [];
+        return NextResponse.json({
+          images: [],
+          folders: dates,
+          prefix: event + '/',
+          source: 'cached',
+          page,
+          limit
+        } as S3ApiResponse, {
+          headers: {
+            'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+            'X-Cache': 'HIT-CRON',
+            'ETag': `"cached-${cachedGalleryData.lastUpdated}"`,
+            'Last-Modified': new Date(cachedGalleryData.lastUpdated).toUTCString(),
+            'Vary': 'Accept-Encoding'
+          }
+        });
+      }
+      
+      if (!photographer) {
+        // Return all photographers for the event/date
+        const eventDateKey = `${event}/${date}`;
+        const photographers = cachedGalleryData.photographers[eventDateKey] || [];
+        return NextResponse.json({
+          images: [],
+          folders: photographers,
+          prefix: eventDateKey + '/',
+          source: 'cached',
+          page,
+          limit
+        } as S3ApiResponse, {
+          headers: {
+            'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+            'X-Cache': 'HIT-CRON',
+            'ETag': `"cached-${cachedGalleryData.lastUpdated}"`,
+            'Last-Modified': new Date(cachedGalleryData.lastUpdated).toUTCString(),
+            'Vary': 'Accept-Encoding'
+          }
+        });
+      }
+      
+      // Return images for the specific photographer with pagination
+      const fullKey = `${event}/${date}/${photographer}`;
+      const allImages = cachedGalleryData.images[fullKey] || [];
+      
+      // Apply pagination
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedImages = allImages.slice(startIndex, endIndex);
+      
+      return NextResponse.json({
+        images: paginatedImages,
+        folders: [],
+        prefix: fullKey + '/',
+        source: 'cached',
+        page,
+        limit,
+        total: allImages.length
+      } as S3ApiResponse, {
+        headers: {
+          'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
+          'X-Cache': 'HIT-CRON',
+          'ETag': `"cached-${cachedGalleryData.lastUpdated}"`,
+          'Last-Modified': new Date(cachedGalleryData.lastUpdated).toUTCString(),
+          'Vary': 'Accept-Encoding'
+        }
+      });
+    }
+    
+    // PRIORITY 2: Check if we have a valid cached response (old API cache)
     const now = Date.now();
     if (apiCache[cacheKey] && now - apiCache[cacheKey].timestamp < CACHE_DURATION * 1000) {
+      console.log('Using old API cache');
       return NextResponse.json(apiCache[cacheKey].data, {
         headers: {
           'Cache-Control': `public, max-age=${CACHE_DURATION}, s-maxage=${CACHE_DURATION}, stale-while-revalidate=86400`,
@@ -254,7 +353,9 @@ export async function GET(request: NextRequest) {
       });
     }
     
-    // Check if we should use S3 or fallback to local files
+    // PRIORITY 3: Check if we should use S3 or fallback to local files (slowest)
+    console.log('No cached data available, falling back to real-time S3/local data');
+    
     if (!s3Client || !process.env.AWS_S3_BUCKET_NAME) {
       console.log('S3 credentials not found, using local file fallback');
       const mockData = await getMockGalleryData(

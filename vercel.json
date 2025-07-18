@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "src/app/api/cron/**": {
+      "maxDuration": 300
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/refresh-gallery-data",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/optimize-images",
+      "schedule": "0 2 * * *"
+    }
+  ]
+} 
