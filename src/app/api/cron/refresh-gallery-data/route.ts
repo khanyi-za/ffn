@@ -1,7 +1,7 @@
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { storeInCache, getCachedGalleryData, type ImageData, type GalleryData } from '@/lib/gallery-cache';
+import { storeInCache, type ImageData, type GalleryData } from '@/lib/gallery-cache';
 
 // Initialize S3 client
 const s3Client = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? 
