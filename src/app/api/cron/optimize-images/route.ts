@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { getCachedGalleryData } from '../refresh-gallery-data/route';
+import { getCachedGalleryData } from '@/lib/gallery-cache';
 
 interface ImageOptimizationData {
   thumbnailUrl?: string;

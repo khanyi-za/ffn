@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { NextRequest } from 'next/server';
-import { getCachedGalleryData } from '../cron/refresh-gallery-data/route';
+import { getCachedGalleryData } from '@/lib/gallery-cache';
 
 // Define types for cached data
 interface CachedData {

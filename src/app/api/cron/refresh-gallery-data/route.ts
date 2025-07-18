@@ -1,28 +1,7 @@
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-
-// Types for our cached data structure
-interface ImageData {
-  id: string;
-  src: string;
-  name: string;
-  aspectRatio: string;
-  lastModified?: Date;
-}
-
-interface GalleryData {
-  events: string[];
-  dates: Record<string, string[]>;
-  photographers: Record<string, string[]>;
-  images: Record<string, ImageData[]>;
-  lastUpdated: string;
-}
-
-interface CachedGalleryData {
-  data: GalleryData;
-  timestamp: number;
-}
+import { storeInCache, getCachedGalleryData, type ImageData, type GalleryData } from '@/lib/gallery-cache';
 
 // Initialize S3 client
 const s3Client = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? 
@@ -37,8 +16,7 @@ const s3Client = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_
 // CloudFront domain
 const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || '';
 
-// In-memory cache as backup (this will be replaced with Vercel KV in production)
-let memoryCache: CachedGalleryData | null = null;
+// Cache functions are now imported from @/lib/gallery-cache
 
 // Helper function to create proper CloudFront URL
 function createCloudFrontUrl(key: string): string {
@@ -197,31 +175,7 @@ async function getImagesForPhotographer(event: string, date: string, photographe
   }
 }
 
-// Function to store data in cache (this will be replaced with Vercel KV)
-async function storeInCache(data: GalleryData): Promise<void> {
-  // For now, store in memory cache
-  memoryCache = {
-    data,
-    timestamp: Date.now()
-  };
-  
-  // TODO: Replace with Vercel KV storage
-  // await kv.set('gallery-data', JSON.stringify(data));
-  console.log('Gallery data cached successfully');
-}
-
-// Function to get cached data
-export async function getCachedGalleryData(): Promise<GalleryData | null> {
-  // TODO: Replace with Vercel KV retrieval
-  // const cached = await kv.get('gallery-data');
-  // if (cached) return JSON.parse(cached);
-  
-  if (memoryCache && Date.now() - memoryCache.timestamp < 24 * 60 * 60 * 1000) {
-    return memoryCache.data;
-  }
-  
-  return null;
-}
+// Cache functions are now imported from @/lib/gallery-cache
 
 // Main cron job function
 export async function GET(request: NextRequest) {
