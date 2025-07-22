@@ -7,6 +7,7 @@ import Footer from "@/components/footer"
 import ServicesGrid from "@/components/services-grid"
 // import RecentCollaborations from "@/components/recent-collaborations"
 import ContactService from "@/components/contact-service"
+import PageLoader from "@/components/page-loader"
 
 
 type Service = {
@@ -17,6 +18,12 @@ type Service = {
 }
 
 export default function ServicesPage() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+  }
+
   const services: Service[] = [
     {
       id: 0,
@@ -72,6 +79,10 @@ export default function ServicesPage() {
     
     return () => clearInterval(interval)
   }, [goToNext])
+
+  if (isLoading) {
+    return <PageLoader onLoadingComplete={handleLoadingComplete} />
+  }
 
   return (
     <main className="flex flex-col with-hero-nav">

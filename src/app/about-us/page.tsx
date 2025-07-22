@@ -5,6 +5,7 @@ import AboutHero from "@/components/about-hero"
 import Footer from "@/components/footer"
 import Image from "next/image"
 import { useState, useEffect, useRef, ReactNode } from "react"
+import PageLoader from "@/components/page-loader"
 
 // TypewriterEffect component for the title
 interface TypewriterEffectProps {
@@ -177,7 +178,12 @@ function ScrollRevealText({ children }: ScrollRevealTextProps) {
 }
 
 export default function AboutUs() {
+  const [isLoading, setIsLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+  }
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
@@ -195,6 +201,10 @@ export default function AboutUs() {
         behavior: 'smooth'
       })
     }
+  }
+
+  if (isLoading) {
+    return <PageLoader onLoadingComplete={handleLoadingComplete} />
   }
 
   return (
@@ -304,7 +314,7 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Co-Founder & CEO</p>
+                    <p className="text-sm font-medium">Co-Founder & Chief Executive Officer</p>
                   </div>
                 </div>
               </div>
@@ -324,7 +334,7 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Co-Founder & CFO</p>
+                    <p className="text-sm font-medium">Co-Founder & Chief Financial Officer</p>
                   </div>
                 </div>
               </div>
@@ -344,7 +354,7 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Head Of Operations</p>
+                    <p className="text-sm font-medium">Chief Operational Officer</p>
                   </div>
                 </div>
               </div>

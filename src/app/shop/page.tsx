@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import Navigation from "@/components/navigation"
 import Footer from "@/components/footer"
+import PageLoader from "@/components/page-loader"
 
 // TypewriterEffect component for the title
 interface TypewriterEffectProps {
@@ -97,7 +98,13 @@ function TypewriterEffect({
 }
 
 export default function Shop() {
+  const [isLoading, setIsLoading] = useState(true)
   const [currentImage, setCurrentImage] = useState(0);
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+  }
+
   const images = [
     { src: "/images/merch_1.jpeg", alt: "Soundset Sunday Merch & French for New Merch" },
     { src: "/images/merch_2.jpeg", alt: "Soundset Sunday Merch & French for New Collection" }
@@ -110,6 +117,10 @@ export default function Shop() {
     
     return () => clearInterval(interval);
   }, []);
+
+  if (isLoading) {
+    return <PageLoader onLoadingComplete={handleLoadingComplete} />
+  }
   
   return (
     <main className="min-h-screen bg-black text-white">

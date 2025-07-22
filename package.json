@@ -6,16 +6,21 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-thumbnails": "node scripts/generate-thumbnails.js",
+    "generate-thumbnails:dry-run": "node scripts/generate-thumbnails.js --dry-run"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.782.0",
     "@next/font": "^14.2.15",
+    "dotenv": "^17.2.0",
     "googleapis": "^148.0.0",
     "lodash": "^4.17.21",
     "next": "15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "resend": "^4.7.0",
+    "sharp": "^0.33.5",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

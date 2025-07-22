@@ -8,6 +8,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
+import PageLoader from "@/components/page-loader"
 
 // Define the type for event data
 type EventDataType = {
@@ -126,6 +127,12 @@ const eventData: EventsDataObjectType = {
 }
 
 function EventsContent() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+  }
+
   // Helper function to format display text
   const formatDisplayText = (text: string) => {
     if (text === "Electic Sessions") {
@@ -157,6 +164,10 @@ function EventsContent() {
         detailsSection.scrollIntoView({ behavior: 'smooth' })
       }
     }, 100)
+  }
+
+  if (isLoading) {
+    return <PageLoader onLoadingComplete={handleLoadingComplete} />
   }
 
   return (

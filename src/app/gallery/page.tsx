@@ -5,13 +5,16 @@ import Navigation from "@/components/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
+import PageLoader from "@/components/page-loader"
 
 interface ImageData {
   id: string;
   src: string;
+  originalSrc?: string;
   name: string;
   aspectRatio: string;
   lastModified?: Date;
+  isOptimized?: boolean;
 }
 
 interface S3ApiResponse {
@@ -46,6 +49,12 @@ async function fetchWithRetry(url: string, maxRetries = 3, retryDelay = 500): Pr
 }
 
 export default function GalleryPage() {
+  const [isPageLoading, setIsPageLoading] = useState(true)
+
+  const handleLoadingComplete = () => {
+    setIsPageLoading(false)
+  }
+
   // For event and date dropdown filters
   const [activeEvent, setActiveEvent] = useState('SoundSet Sunday');
   const [activeDate, setActiveDate] = useState('09 February 2025');
@@ -73,6 +82,13 @@ export default function GalleryPage() {
   // State for prefetching
   const [isPrefetching, setIsPrefetching] = useState(false);
   const [connectionSpeed, setConnectionSpeed] = useState<'slow' | 'fast'>('fast');
+
+  // Lightbox state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<ImageData | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+
 
   // Track when an image finishes loading
   const handleImageLoaded = useCallback((id: string) => {
@@ -226,29 +242,96 @@ export default function GalleryPage() {
     }
   }, []);
 
-  // Download individual image
-  const downloadImage = useCallback(async (imageUrl: string, imageName: string, imageId: string) => {
+  // Open lightbox
+  const openLightbox = useCallback((image: ImageData, index: number) => {
+    setLightboxImage(image);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+  }, []);
+
+  // Close lightbox
+  const closeLightbox = useCallback(() => {
+    setLightboxOpen(false);
+    setLightboxImage(null);
+    // Restore body scroll
+    document.body.style.overflow = 'unset';
+  }, []);
+
+  // Navigate lightbox
+  const navigateLightbox = useCallback((direction: 'prev' | 'next') => {
+    if (!lightboxImage) return;
+    
+    const newIndex = direction === 'next' 
+      ? (lightboxIndex + 1) % images.length
+      : (lightboxIndex - 1 + images.length) % images.length;
+    
+    setLightboxImage(images[newIndex]);
+    setLightboxIndex(newIndex);
+  }, [lightboxImage, lightboxIndex, images]);
+
+
+
+  // Handle keyboard navigation in lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowLeft') {
+        navigateLightbox('prev');
+      } else if (e.key === 'ArrowRight') {
+        navigateLightbox('next');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [lightboxOpen, closeLightbox, navigateLightbox]);
+
+  // Download individual image (using streaming API)
+  const downloadImage = useCallback(async (image: ImageData) => {
     try {
-      setDownloadingImages(prev => ({ ...prev, [imageId]: true }));
+      setDownloadingImages(prev => ({ ...prev, [image.id]: true }));
       
-      // Use our download API to avoid CORS issues
-      const downloadUrl = `/api/download-image?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(imageName || 'image.jpg')}`;
+      // Use original URL for download, fallback to src
+      const downloadUrl = image.originalSrc || image.src;
+      const imageName = image.name || 'image';
+      const fileExtension = downloadUrl.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `${imageName}.${fileExtension}`;
       
-      // Create a temporary link to trigger download
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `${imageName || 'image'}.jpg`;
-      document.body.appendChild(link);
-      link.click();
+      console.log(`🔄 Starting download for: ${fileName}`);
       
-      // Clean up
-      document.body.removeChild(link);
+      // Use streaming API route for download
+      const apiDownloadUrl = `/api/download-image?url=${encodeURIComponent(downloadUrl)}&filename=${encodeURIComponent(fileName)}`;
+      
+      // Create download link that opens the streaming API
+      const downloadLink = document.createElement('a');
+      downloadLink.href = apiDownloadUrl;
+      downloadLink.download = fileName;
+      downloadLink.style.display = 'none';
+      downloadLink.setAttribute('target', '_blank'); // Ensure it doesn't navigate current page
+      
+      // Add to DOM, click, and remove
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      console.log(`✅ Download initiated for: ${fileName}`);
       
     } catch (error) {
       console.error('Error downloading image:', error);
-      alert('Failed to download image. Please try again.');
+      
+      // Show a more helpful error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Download failed: ${errorMessage}. Please try again or contact support if the issue persists.`);
     } finally {
-      setDownloadingImages(prev => ({ ...prev, [imageId]: false }));
+      // Add a small delay before removing the loading state to ensure download started
+      setTimeout(() => {
+        setDownloadingImages(prev => ({ ...prev, [image.id]: false }));
+      }, 1000);
     }
   }, []);
   
@@ -467,6 +550,10 @@ export default function GalleryPage() {
     fetchPhotographers();
   }, [activeEvent, activeDate]);
 
+  if (isPageLoading) {
+    return <PageLoader onLoadingComplete={handleLoadingComplete} />
+  }
+
   return (
     <main className="min-h-screen with-hero-nav">
       {/* Gallery Hero Section */}
@@ -581,8 +668,8 @@ export default function GalleryPage() {
             <>
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-2 auto-rows-[10px]">
                 {images.map((image, index) => {
-                  // Calculate row span based on aspect ratio
-                  const rowSpan = image.aspectRatio === "tall" ? 40 : 
+                  // Calculate row span based on aspect ratio - Updated for 9:16
+                  const rowSpan = image.aspectRatio === "tall" ? 50 : 
                                 image.aspectRatio === "wide" ? 20 : 30;
                   
                   return (
@@ -596,7 +683,7 @@ export default function GalleryPage() {
                     >
                       <div className={`w-full h-full ${
                         image.aspectRatio === "square" ? "aspect-square" :
-                        image.aspectRatio === "tall" ? "aspect-[3/4]" :
+                        image.aspectRatio === "tall" ? "aspect-[9/16]" :
                         "aspect-[16/9]"
                       } bg-gray-100 overflow-hidden rounded-lg relative group cursor-pointer`}>
                         {/* Show progressive loading with blurred placeholder */}
@@ -649,13 +736,40 @@ export default function GalleryPage() {
                           priority={index < 4} // Prioritize first 4 images
                         />
                         
-                        {/* Download overlay - shows on hover */}
+                        {/* Image overlay - shows on hover */}
                         {loadedImages[image.id] && (
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center space-x-3">
+                            {/* View button */}
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
-                                downloadImage(image.src, image.name, image.id);
+                                openLightbox(image, index);
+                              }}
+                              className="p-3 rounded-full bg-white hover:bg-gray-100 hover:scale-110 transition-all duration-200"
+                              title="View image"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-black"
+                              >
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                            </button>
+                            
+                            {/* Download button */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                downloadImage(image);
                               }}
                               disabled={downloadingImages[image.id]}
                               className={`p-3 rounded-full transition-all duration-200 ${
@@ -710,6 +824,79 @@ export default function GalleryPage() {
           )}
         </div>
       </div>
+
+
+
+      {/* Lightbox Modal */}
+      {lightboxOpen && lightboxImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 z-60"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          {/* Image Container with Fixed 9:16 Aspect Ratio */}
+          <div className="relative w-[90vw] max-w-md aspect-[9/16] flex items-center justify-center">
+            <Image
+              src={lightboxImage.originalSrc || lightboxImage.src}
+              alt={lightboxImage.name}
+              fill
+              className="object-cover rounded-lg"
+              quality={30}
+              priority
+            />
+          </div>
+          
+          {/* Image info */}
+          <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-3 rounded">
+            <p className="text-sm font-medium">{lightboxImage.name}</p>
+            <p className="text-xs text-gray-300">
+              {lightboxIndex + 1} of {images.length}
+              {lightboxImage.isOptimized && ' • Optimized'}
+            </p>
+          </div>
+          
+          {/* Download button in lightbox */}
+          <div className="absolute bottom-4 right-4">
+            <button
+              onClick={() => downloadImage(lightboxImage)}
+              disabled={downloadingImages[lightboxImage.id]}
+              className={`p-3 rounded-full transition-all duration-200 ${
+                downloadingImages[lightboxImage.id]
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-white hover:bg-gray-100'
+              }`}
+              title={`Download original ${lightboxImage.name}`}
+            >
+              {downloadingImages[lightboxImage.id] ? (
+                <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-black"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </main>

@@ -19,14 +19,37 @@ const nextConfig = {
   },
   // Add timeout configuration for server-side rendering
   serverRuntimeConfig: {
-    timeout: 30000, // 30 seconds timeout
+    timeout: 120000, // Increased to 120 seconds for large downloads
   },
-  // Add request timeout for API routes
-  api: {
-    responseLimit: false,
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
+  // Optimize API configuration for large file streaming
+  experimental: {
+    largePageDataBytes: 128 * 1000, // 128KB
+  },
+  // Headers for better caching and streaming
+  async headers() {
+    return [
+      {
+        source: '/api/download-image',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400', // Cache downloads for 1 day
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+        ],
+      },
+    ];
   },
 };
 
