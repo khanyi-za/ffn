@@ -41,4 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 # Generated thumbnails (created locally by scripts/generate-thumbnails.js)
-/public/thumbnails/
+#/public/thumbnails/

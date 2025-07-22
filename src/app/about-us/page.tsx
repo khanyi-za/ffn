@@ -394,7 +394,7 @@ export default function AboutUs() {
                   </div>
                   
                   <div className="bg-white text-black py-2 px-6 inline-block self-start mt-2">
-                    <p className="text-sm font-medium">Social Media and Creative Lead</p>
+                    <p className="text-sm font-medium">Social Media And Creative Lead</p>
                 </div>
               </div>
             </div>
