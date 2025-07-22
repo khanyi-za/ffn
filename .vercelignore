@@ -1,0 +1,11 @@
+# Exclude auto-optimize API from production deployment
+# This API uses Sharp library for on-demand image processing
+# Since we use pre-generated thumbnails, this API is not needed in production
+src/app/api/auto-optimize-images/
+
+# Exclude development scripts from deployment
+scripts/generate-thumbnails.js
+
+# Optional: Exclude other development-only files
+*.md
+!README.md 

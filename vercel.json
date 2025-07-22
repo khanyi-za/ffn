@@ -7,9 +7,6 @@
     "src/app/api/download-image/**": {
       "maxDuration": 120
     },
-    "src/app/api/auto-optimize-images/**": {
-      "maxDuration": 300
-    },
     "src/app/api/s3-images/**": {
       "maxDuration": 60
     }

@@ -20,7 +20,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^4.7.0",
-    "sharp": "^0.33.5",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
@@ -34,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
     "postcss": "^8.5.3",
+    "sharp": "^0.33.5",
     "tailwindcss": "^4.0.11",
     "typescript": "^5"
   }
