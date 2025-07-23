@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Generated thumbnails (created locally by scripts/generate-thumbnails.js)
 #/public/thumbnails/
+
+# Image optimization backups - exclude large original files
+public/row_images_original/
