@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import CollaborationModal from "./collaboration-modal"
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ export default function ContactForm() {
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' })
+  const [isCollabModalOpen, setIsCollabModalOpen] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -139,11 +141,15 @@ export default function ContactForm() {
         </div>
 
         <div className="mt-12">
-          <p className="text-sm mb-6">
-            Are you an artist seeking to collaborate with us? Follow this link:{" "}
-            <Link href="/collaborate" className="text-blue-400 hover:underline">
+          <p className="text-xl mb-6">
+            Are you an artist seeking to collaborate with us?{" "}
+            <button
+              type="button"
+              onClick={() => setIsCollabModalOpen(true)}
+              className="text-blue-400 hover:underline cursor-pointer"
+            >
               COLLABORATE WITH US
-            </Link>
+            </button>
           </p>
 
           <div className="flex justify-center">
@@ -171,6 +177,12 @@ export default function ContactForm() {
           </div>
         </div>
       </form>
+
+      {/* Collaboration Modal */}
+      <CollaborationModal 
+        isOpen={isCollabModalOpen}
+        onClose={() => setIsCollabModalOpen(false)}
+      />
     </div>
   )
 }

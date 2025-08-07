@@ -30,30 +30,47 @@ export async function POST(request: NextRequest) {
       from: process.env.RESEND_FROM_EMAIL!,
       to: process.env.RESEND_TO_EMAIL!,
       replyTo: email, // User can reply directly to the person who submitted
-      subject: `New Contact Form Submission from ${name}`,
+      subject: `French for New - Contact Form: ${name}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #000; border-bottom: 2px solid #000; padding-bottom: 10px;">
-            New Contact Form Submission
-          </h2>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #000; font-size: 24px; margin: 0;">French for New</h1>
+            <p style="color: #666; margin: 5px 0;">Website Contact Form Submission</p>
+          </div>
           
-          <div style="margin: 20px 0;">
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h2 style="color: #333; margin-top: 0; font-size: 18px;">Contact Details</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; color: #666; font-weight: bold;">Name:</td>
+                <td style="padding: 8px 0; color: #333;">${name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #666; font-weight: bold;">Email:</td>
+                <td style="padding: 8px 0; color: #333;">${email}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #666; font-weight: bold;">Date:</td>
+                <td style="padding: 8px 0; color: #333;">${new Date().toLocaleString()}</td>
+              </tr>
+            </table>
           </div>
           
           <div style="margin: 20px 0;">
-            <h3 style="color: #000;">Message:</h3>
-            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; white-space: pre-wrap;">
+            <h3 style="color: #333; margin-bottom: 10px;">Message:</h3>
+            <div style="background: #ffffff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px; white-space: pre-wrap; color: #333;">
               ${message}
             </div>
           </div>
           
-          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-          <p style="color: #666; font-size: 12px;">
-            This email was sent from the French for New contact form.
-          </p>
+          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <p style="color: #888; font-size: 14px; margin: 0;">
+              This email was automatically generated from the French for New website contact form.
+            </p>
+            <p style="color: #888; font-size: 12px; margin: 5px 0 0 0;">
+              Visit us at frenchfornew.com
+            </p>
+          </div>
         </div>
       `,
       text: `
