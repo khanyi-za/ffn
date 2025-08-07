@@ -27,8 +27,8 @@ export default function Hero() {
         {/* Mobile (default) */}
         <div className="block sm:hidden">
           <Image
-            src="/images/hero_home.png"
-            alt="Event crowd with red lighting"
+            src="/images/HERO_v2.jpg"
+            alt="Alternative hero image"
             fill
             className="object-cover object-[75%_center]"
             sizes="100vw"
@@ -39,8 +39,8 @@ export default function Hero() {
         {/* Small screens */}
         <div className="hidden sm:block md:hidden">
           <Image
-            src="/images/hero_home.png"
-            alt="Event crowd with red lighting"
+            src="/images/HERO_v2.jpg"
+            alt="Alternative hero image"
             fill
             className="object-cover object-[65%_center]"
             sizes="100vw"
@@ -51,8 +51,8 @@ export default function Hero() {
         {/* Medium screens - our target perfect fit */}
         <div className="hidden md:block lg:hidden">
           <Image
-            src="/images/hero_home.png"
-            alt="Event crowd with red lighting"
+            src="/images/HERO_v2.jpg"
+            alt="Alternative hero image"
             fill
             className="object-contain"
             sizes="100vw"
@@ -63,8 +63,8 @@ export default function Hero() {
         {/* Large screens */}
         <div className="hidden lg:block xl:hidden">
           <Image
-            src="/images/hero_home.png"
-            alt="Event crowd with red lighting"
+            src="/images/HERO_v2.jpg"
+            alt="Alternative hero image"
             fill
             className="object-cover object-[40%_center]"
             sizes="100vw"
@@ -75,8 +75,8 @@ export default function Hero() {
         {/* Extra large screens */}
         <div className="hidden xl:block">
           <Image
-            src="/images/hero_home.png"
-            alt="Event crowd with red lighting"
+            src="/images/HERO_v2.jpg"
+            alt="Alternative hero image"
             fill
             className="object-cover object-center"
             sizes="100vw"
@@ -94,8 +94,8 @@ export default function Hero() {
         {/* Mobile (default) */}
         <div className="block sm:hidden">
           <Image
-            src="/images/HERO_v2.jpg"
-            alt="Alternative hero image"
+            src="/images/hero_home.png"
+            alt="Event crowd with red lighting"
             fill
             className="object-cover object-[75%_center]"
             sizes="100vw"
@@ -106,8 +106,8 @@ export default function Hero() {
         {/* Small screens */}
         <div className="hidden sm:block md:hidden">
           <Image
-            src="/images/HERO_v2.jpg"
-            alt="Alternative hero image"
+            src="/images/hero_home.png"
+            alt="Event crowd with red lighting"
             fill
             className="object-cover object-[65%_center]"
             sizes="100vw"
@@ -118,8 +118,8 @@ export default function Hero() {
         {/* Medium screens - our target perfect fit */}
         <div className="hidden md:block lg:hidden">
           <Image
-            src="/images/HERO_v2.jpg"
-            alt="Alternative hero image"
+            src="/images/hero_home.png"
+            alt="Event crowd with red lighting"
             fill
             className="object-contain"
             sizes="100vw"
@@ -130,8 +130,8 @@ export default function Hero() {
         {/* Large screens */}
         <div className="hidden lg:block xl:hidden">
           <Image
-            src="/images/HERO_v2.jpg"
-            alt="Alternative hero image"
+            src="/images/hero_home.png"
+            alt="Event crowd with red lighting"
             fill
             className="object-cover object-[40%_center]"
             sizes="100vw"
@@ -142,8 +142,8 @@ export default function Hero() {
         {/* Extra large screens */}
         <div className="hidden xl:block">
           <Image
-            src="/images/HERO_v2.jpg"
-            alt="Alternative hero image"
+            src="/images/hero_home.png"
+            alt="Event crowd with red lighting"
             fill
             className="object-cover object-center"
             sizes="100vw"
@@ -164,24 +164,24 @@ export default function Hero() {
         <div className="flex-grow flex flex-col justify-center px-6 md:px-12 pt-[20vh]">
           {/* First tagline - shows when first hero is active */}
           <h1 
-            className={`font-serif text-[25px] md:text-[36px] font-light text-white max-w-md leading-tight transition-opacity duration-1000 ease-in-out ${
+            className={`font-serif text-[18px] md:text-[32px] font-light text-white max-w-xl leading-tight transition-opacity duration-1000 ease-in-out ${
               activeHero === 1 ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <div>WE FOLLOW CULTURE.</div>
-            <div className="mt-2">WE ENDORSE CULTURE.</div>
-            <div className="mt-2">WE CREATE CULTURE.</div>
-          </h1>
-
-          {/* Second tagline - shows when second hero is active */}
-          <h1 
-            className={`font-serif text-[18px] md:text-[32px] font-light text-white max-w-xl leading-tight absolute transition-opacity duration-1000 ease-in-out ${
-              activeHero === 2 ? 'opacity-100' : 'opacity-0'
             }`}
           >
             <div className="whitespace-nowrap">LIVE MUSIC EVENT EXPERIENCES.</div>
             <div className="mt-2 whitespace-nowrap">IMMERSIVE EVENT PRODUCTION.</div>
             <div className="mt-2 whitespace-nowrap">VIBRANT EXHIBITIONS OF MUSIC & ART.</div>
+          </h1>
+
+          {/* Second tagline - shows when second hero is active */}
+          <h1 
+            className={`font-serif text-[25px] md:text-[36px] font-light text-white max-w-md leading-tight absolute transition-opacity duration-1000 ease-in-out ${
+              activeHero === 2 ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <div>WE FOLLOW CULTURE.</div>
+            <div className="mt-2">WE ENDORSE CULTURE.</div>
+            <div className="mt-2">WE CREATE CULTURE.</div>
           </h1>
         </div>
 
