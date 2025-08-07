@@ -114,6 +114,7 @@ export default function UpcomingEvents() {
   };
 
   const events: Event[] = [
+    /*
     {
       id: 1,
       title: "Electic Sessions",
@@ -122,6 +123,7 @@ export default function UpcomingEvents() {
       location: "Democracy Bar, Illovo",
       link: "/events?event=electic-session"
     },
+    */
     /*
     {
       id: 2,
@@ -217,80 +219,134 @@ export default function UpcomingEvents() {
           </div>
         </div>
 
-        {/* Events display - horizontal scrollable layout */}
-        <div 
-          ref={scrollContainerRef}
-          className="flex space-x-6 sm:space-x-8 md:space-x-24 lg:space-x-36 xl:space-x-48 mb-8 md:mb-12 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
-        >
-          {/* Only render client-side content after mounting to prevent hydration mismatch */}
-          {isMounted && events.map((event) => (
-            <div key={event.id} className="w-[75vw] sm:w-[70vw] md:w-[40vw] lg:w-[35vw] xl:w-[30vw] flex-shrink-0">
-              <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:gap-8">
-                {/* Event Image with white border */}
-                <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5]">
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={event.image}
-                      alt={event.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 75vw, (max-width: 768px) 70vw, 300px"
-                    />
-                  </div>
+        {/* Events display or creative placeholder */}
+        {isMounted && events.length === 0 ? (
+          /* Creative placeholder for no events */
+          <div className="flex flex-col items-center justify-center min-h-[400px] mb-8 md:mb-12">
+            {/* Animated vinyl record */}
+            <div className="relative mb-8">
+              <div className="w-32 h-32 md:w-40 md:h-40 bg-black border-2 border-white rounded-full flex items-center justify-center animate-spin-slow">
+                <div className="w-16 h-16 md:w-20 md:h-20 border-2 border-white rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-white rounded-full"></div>
                 </div>
+              </div>
+              {/* Sound waves */}
+              <div className="absolute -top-2 -left-2 w-36 h-36 md:w-44 md:h-44 border border-white/30 rounded-full animate-ping"></div>
+              <div className="absolute -top-4 -left-4 w-40 h-40 md:w-48 md:h-48 border border-white/20 rounded-full animate-ping animation-delay-75"></div>
+            </div>
+            
+            {/* Creative message */}
+            <div className="text-center max-w-2xl">
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif mb-4 tracking-wider">
+                <TypewriterEffect text="The Stage Is Set..." speed={120} />
+              </h3>
+              <p className="text-lg md:text-xl text-white/80 mb-6 leading-relaxed">
+                Something extraordinary is brewing in our creative kitchen. 
+                <br className="hidden sm:block" />
+                New experiences are being crafted with passion and precision.
+              </p>
+              
+              {/* Call to action */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link 
+                  href="/contact" 
+                  className="inline-block border-2 border-white px-8 py-3 text-base font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 transform hover:scale-105"
+                >
+                  GET NOTIFIED
+                </Link>
+                <Link 
+                  href="/events" 
+                  className="inline-block border-2 border-white/60 px-8 py-3 text-base font-medium tracking-wider text-white/80 hover:border-white hover:text-white transition-all duration-300"
+                >
+                  EXPLORE PAST EVENTS
+                </Link>
+              </div>
+            </div>
+            
+            {/* Decorative elements */}
+            <div className="absolute top-1/2 left-4 transform -translate-y-1/2 opacity-20">
+              <div className="text-6xl md:text-8xl font-serif">♪</div>
+            </div>
+            <div className="absolute top-1/3 right-8 transform -translate-y-1/2 opacity-20">
+              <div className="text-4xl md:text-6xl font-serif">♫</div>
+            </div>
+          </div>
+        ) : (
+          /* Regular events display - horizontal scrollable layout */
+          <div 
+            ref={scrollContainerRef}
+            className="flex space-x-6 sm:space-x-8 md:space-x-24 lg:space-x-36 xl:space-x-48 mb-8 md:mb-12 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
+          >
+            {/* Only render client-side content after mounting to prevent hydration mismatch */}
+            {isMounted && events.map((event) => (
+              <div key={event.id} className="w-[75vw] sm:w-[70vw] md:w-[40vw] lg:w-[35vw] xl:w-[30vw] flex-shrink-0">
+                <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:gap-8">
+                  {/* Event Image with white border */}
+                  <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5]">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 75vw, (max-width: 768px) 70vw, 300px"
+                      />
+                    </div>
+                  </div>
 
-                {/* Event Details - Aligned to match the reference */}
-                <div className="flex flex-col justify-center md:justify-start flex-1">
-                  <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{formatDisplayText(event.title)}</h3>
-                  <p className="text-sm sm:text-base md:text-lg mb-1 font-mono">{event.date}</p>
-                  <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 font-mono">{event.location}</p>
+                  {/* Event Details - Aligned to match the reference */}
+                  <div className="flex flex-col justify-center md:justify-start flex-1">
+                    <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{formatDisplayText(event.title)}</h3>
+                    <p className="text-sm sm:text-base md:text-lg mb-1 font-mono">{event.date}</p>
+                    <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 font-mono">{event.location}</p>
 
-                  {/* Buttons - Sized to match the reference */}
-                  <div className="flex gap-3 sm:gap-4">
-                    <Link 
-                      href={event.title === "Electic Sessions" ? "https://fixr.co/event/eclectic-sessions-tickets-406173760?region=za" : event.link} 
-                      className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
-                      target={event.title === "Electic Sessions" ? "_blank" : "_self"}
-                      rel={event.title === "Electic Sessions" ? "noopener noreferrer" : ""}
-                      /* 
-                      href={event.title === "SoundSet Sunday" ? "https://fixr.co/event/soundset-sunday-x-cr8torcon-tickets-564111961?region=za" : event.link} 
-                      target={event.title === "SoundSet Sunday" ? "_blank" : "_self"}
-                      rel={event.title === "SoundSet Sunday" ? "noopener noreferrer" : ""}
-                      */
-                    >
-                      TICKETS
-                    </Link>
-                    <Link 
-                      href={event.link} 
-                      className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
-                      onClick={handleExploreClick}
-                    >
-                      EXPLORE
-                    </Link>
+                    {/* Buttons - Sized to match the reference */}
+                    <div className="flex gap-3 sm:gap-4">
+                      <Link 
+                        href={event.title === "Electic Sessions" ? "https://fixr.co/event/eclectic-sessions-tickets-406173760?region=za" : event.link} 
+                        className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                        target={event.title === "Electic Sessions" ? "_blank" : "_self"}
+                        rel={event.title === "Electic Sessions" ? "noopener noreferrer" : ""}
+                        /* 
+                        href={event.title === "SoundSet Sunday" ? "https://fixr.co/event/soundset-sunday-x-cr8torcon-tickets-564111961?region=za" : event.link} 
+                        target={event.title === "SoundSet Sunday" ? "_blank" : "_self"}
+                        rel={event.title === "SoundSet Sunday" ? "noopener noreferrer" : ""}
+                        */
+                      >
+                        TICKETS
+                      </Link>
+                      <Link 
+                        href={event.link} 
+                        className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                        onClick={handleExploreClick}
+                      >
+                        EXPLORE
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-          
-          {/* Loading skeleton when not mounted */}
-          {!isMounted && (
-            <div className="w-[75vw] sm:w-[70vw] md:w-[40vw] flex-shrink-0">
-              <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:gap-8">
-                <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5] bg-gray-900"></div>
-                <div className="flex flex-col justify-center md:justify-start flex-1">
-                  <div className="h-6 sm:h-8 md:h-10 bg-gray-900 rounded w-3/4 mb-2 sm:mb-3 md:mb-4"></div>
-                  <div className="h-3 sm:h-4 bg-gray-900 rounded w-1/2 mb-1"></div>
-                  <div className="h-3 sm:h-4 bg-gray-900 rounded w-3/4 mb-3 sm:mb-4 md:mb-6"></div>
-                  <div className="flex gap-3 sm:gap-4">
-                    <div className="h-8 sm:h-10 bg-gray-900 rounded w-20 sm:w-24"></div>
-                    <div className="h-8 sm:h-10 bg-gray-900 rounded w-20 sm:w-24"></div>
+            ))}
+            
+            {/* Loading skeleton when not mounted */}
+            {!isMounted && (
+              <div className="w-[75vw] sm:w-[70vw] md:w-[40vw] flex-shrink-0">
+                <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:gap-8">
+                  <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5] bg-gray-900"></div>
+                  <div className="flex flex-col justify-center md:justify-start flex-1">
+                    <div className="h-6 sm:h-8 md:h-10 bg-gray-900 rounded w-3/4 mb-2 sm:mb-3 md:mb-4"></div>
+                    <div className="h-3 sm:h-4 bg-gray-900 rounded w-1/2 mb-1"></div>
+                    <div className="h-3 sm:h-4 bg-gray-900 rounded w-3/4 mb-3 sm:mb-4 md:mb-6"></div>
+                    <div className="flex gap-3 sm:gap-4">
+                      <div className="h-8 sm:h-10 bg-gray-900 rounded w-20 sm:w-24"></div>
+                      <div className="h-8 sm:h-10 bg-gray-900 rounded w-20 sm:w-24"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   )
