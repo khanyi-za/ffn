@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import Link from "next/link"
 import CollaborationModal from "./collaboration-modal"
 
 export default function ContactForm() {
