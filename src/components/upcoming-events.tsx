@@ -114,26 +114,14 @@ export default function UpcomingEvents() {
   };
 
   const events: Event[] = [
-    /*
     {
       id: 1,
-      title: "Electic Sessions",
-      image: "/upcoming_events_poster/electic_session_poster.png",
-      date: "25 July 2025",
-      location: "Democracy Bar, Illovo",
-      link: "/events?event=electic-session"
-    },
-    */
-    /*
-    {
-      id: 2,
-      title: "SoundSet Sunday",
-      image: "/upcoming_events_poster/soundset_poster.png",
-      date: "27 April 2025",
-      location: "Parkview Event Space, Woodstock",
-      link: "/events?event=soundset-sunday"
+      title: "Soundset Sunday, Season Ticket",
+      image: "/upcoming_events_poster/SEASON_TICKET.png",
+      date: "26 August 2025",
+      location: "",
+      link: "https://fixr.co/event/soundset-sunday-season-ticket-tickets-646071320"
     }
-    */
   ]
 
   const [isMounted, setIsMounted] = useState(false)
@@ -303,20 +291,15 @@ export default function UpcomingEvents() {
                     {/* Buttons - Sized to match the reference */}
                     <div className="flex gap-3 sm:gap-4">
                       <Link 
-                        href={event.title === "Electic Sessions" ? "https://fixr.co/event/eclectic-sessions-tickets-406173760?region=za" : event.link} 
+                        href={event.link} 
                         className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
-                        target={event.title === "Electic Sessions" ? "_blank" : "_self"}
-                        rel={event.title === "Electic Sessions" ? "noopener noreferrer" : ""}
-                        /* 
-                        href={event.title === "SoundSet Sunday" ? "https://fixr.co/event/soundset-sunday-x-cr8torcon-tickets-564111961?region=za" : event.link} 
-                        target={event.title === "SoundSet Sunday" ? "_blank" : "_self"}
-                        rel={event.title === "SoundSet Sunday" ? "noopener noreferrer" : ""}
-                        */
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
                         TICKETS
                       </Link>
                       <Link 
-                        href={event.link} 
+                        href="/events?event=soundset-sunday" 
                         className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
                         onClick={handleExploreClick}
                       >
