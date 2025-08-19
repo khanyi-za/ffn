@@ -620,7 +620,7 @@ export default function GalleryPage() {
       {/* Photographer Filter Section */}
       <div className="backdrop-blur-md bg-white/30 py-4 px-6 md:px-12 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex space-x-12 overflow-x-auto pb-2 hide-scrollbar">
+          <div className="flex space-x-6 md:space-x-12 overflow-x-auto pb-2 hide-scrollbar">
             <h2 className="font-mono text-black font-semibold whitespace-nowrap text-[15px] md:text-base">
               Photographers
             </h2>
