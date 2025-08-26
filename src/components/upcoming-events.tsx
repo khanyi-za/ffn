@@ -13,6 +13,17 @@ type Event = {
   link: string;
 }
 
+interface CountdownTimerProps {
+  targetDate: string;
+}
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
 // TypewriterEffect component for the title
 interface TypewriterEffectProps {
   text: string;
@@ -104,6 +115,115 @@ function TypewriterEffect({
   )
 }
 
+// CountdownTimer component
+function CountdownTimer({ targetDate }: CountdownTimerProps) {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  })
+  const [isExpired, setIsExpired] = useState(false)
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const target = new Date(targetDate).getTime()
+      const now = new Date().getTime()
+      const difference = target - now
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+
+        setTimeLeft({ days, hours, minutes, seconds })
+        setIsExpired(false)
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        setIsExpired(true)
+      }
+    }
+
+    calculateTimeLeft()
+    const timer = setInterval(calculateTimeLeft, 1000)
+
+    return () => clearInterval(timer)
+  }, [targetDate])
+
+  const formatTime = (time: number) => {
+    return time.toString().padStart(2, '0')
+  }
+
+  if (isExpired) {
+    return (
+      <div className="border-2 border-white p-4 bg-black rounded-lg">
+        <p className="text-xs text-white/80 text-center mb-3 font-mono">
+          Tickets Are Live In:
+        </p>
+        <div className="font-mono text-2xl text-white text-center">
+          🎫 LIVE NOW!
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="border-2 border-white p-4 bg-black rounded-lg">
+      <p className="text-xs text-white/80 text-center mb-3 font-mono">
+        Tickets Are Live In:
+      </p>
+      <div className="flex justify-center items-center gap-1">
+        {/* Days */}
+        <div className="flex flex-col items-center">
+          <div className="font-mono text-2xl lg:text-3xl text-white">
+            {formatTime(timeLeft.days)}
+          </div>
+          <div className="text-xs text-white/70 font-mono">
+            days
+          </div>
+        </div>
+        
+        <div className="font-mono text-2xl lg:text-3xl text-white mx-1">:</div>
+        
+        {/* Hours */}
+        <div className="flex flex-col items-center">
+          <div className="font-mono text-2xl lg:text-3xl text-white">
+            {formatTime(timeLeft.hours)}
+          </div>
+          <div className="text-xs text-white/70 font-mono">
+            hrs
+          </div>
+        </div>
+        
+        <div className="font-mono text-2xl lg:text-3xl text-white mx-1">:</div>
+        
+        {/* Minutes */}
+        <div className="flex flex-col items-center">
+          <div className="font-mono text-2xl lg:text-3xl text-white">
+            {formatTime(timeLeft.minutes)}
+          </div>
+          <div className="text-xs text-white/70 font-mono">
+            mins
+          </div>
+        </div>
+        
+        <div className="font-mono text-2xl lg:text-3xl text-white mx-1">:</div>
+        
+        {/* Seconds */}
+        <div className="flex flex-col items-center">
+          <div className="font-mono text-2xl lg:text-3xl text-white">
+            {formatTime(timeLeft.seconds)}
+          </div>
+          <div className="text-xs text-white/70 font-mono">
+            sec
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function UpcomingEvents() {
   // Helper function to format display text
   const formatDisplayText = (text: string) => {
@@ -161,7 +281,7 @@ export default function UpcomingEvents() {
   }
 
   return (
-    <section className="bg-black text-white min-h-[85vh] py-16 md:pt-24 md:pb-20 lg:pt-28 lg:pb-24 xl:pt-32 xl:pb-28 flex flex-col justify-center relative border-b border-white overflow-hidden">
+    <section className="bg-black text-white min-h-[85vh] py-16 md:py-16 lg:py-20 xl:py-24 flex flex-col justify-center relative border-b border-white overflow-hidden">
       <div className="absolute bottom-0 left-0 w-full h-[2px] bg-white animate-ping origin-bottom scale-y-150"></div>
       
       {/* Loading Overlay */}
@@ -175,7 +295,7 @@ export default function UpcomingEvents() {
       )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 w-full">
         {/* Title with border */}
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-6 md:mb-8">
           <div className="border-2 border-white inline-block px-8 py-4 max-w-full">
             <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light tracking-wider whitespace-nowrap">
               <TypewriterEffect text="UPCOMING EVENTS..." speed={100} />
@@ -263,12 +383,12 @@ export default function UpcomingEvents() {
           /* Regular events display - horizontal scrollable layout */
           <div 
             ref={scrollContainerRef}
-            className="flex space-x-6 sm:space-x-8 md:space-x-24 lg:space-x-36 xl:space-x-48 mb-8 md:mb-12 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
+            className="flex space-x-6 sm:space-x-8 md:space-x-24 lg:space-x-36 xl:space-x-48 mb-6 md:mb-8 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
           >
             {/* Only render client-side content after mounting to prevent hydration mismatch */}
             {isMounted && events.map((event) => (
               <div key={event.id} className="w-[75vw] sm:w-[70vw] md:w-[40vw] lg:w-[35vw] xl:w-[30vw] flex-shrink-0">
-                <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:gap-8">
+                <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-start md:gap-8">
                   {/* Event Image with white border */}
                   <div className="flex-shrink-0 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white overflow-hidden w-full md:w-[300px] h-auto aspect-[4/5]">
                     <div className="relative w-full h-full">
@@ -282,29 +402,37 @@ export default function UpcomingEvents() {
                     </div>
                   </div>
 
-                  {/* Event Details - Aligned to match the reference */}
-                  <div className="flex flex-col justify-center md:justify-start flex-1">
-                    <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{formatDisplayText(event.title)}</h3>
-                    <p className="text-sm sm:text-base md:text-lg mb-1 font-mono">{event.date}</p>
-                    <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 font-mono">{event.location}</p>
+                  {/* Right Side Container */}
+                  <div className="flex flex-col flex-1 gap-4">
+                    {/* Countdown Timer - Medium+ screens only */}
+                    <div className="hidden md:block">
+                      <CountdownTimer targetDate="2025-08-26T12:00:00" />
+                    </div>
+                    
+                    {/* Event Details - Aligned to match the reference */}
+                    <div className="flex flex-col justify-center md:justify-start">
+                      <h3 className="text-xl sm:text-2xl md:text-4xl font-serif mb-2 sm:mb-3 md:mb-4 font-light">{formatDisplayText(event.title)}</h3>
+                      <p className="text-sm sm:text-base md:text-lg mb-1 font-mono">{event.date}</p>
+                      <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 font-mono">{event.location}</p>
 
-                    {/* Buttons - Sized to match the reference */}
-                    <div className="flex gap-3 sm:gap-4">
-                      <Link 
-                        href={event.link} 
-                        className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        TICKETS
-                      </Link>
-                      <Link 
-                        href="/events?event=soundset-sunday" 
-                        className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
-                        onClick={handleExploreClick}
-                      >
-                        EXPLORE
-                      </Link>
+                      {/* Buttons - Sized to match the reference */}
+                      <div className="flex gap-3 sm:gap-4">
+                        <Link 
+                          href={event.link} 
+                          className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          TICKETS
+                        </Link>
+                        <Link 
+                          href="/events?event=soundset-sunday" 
+                          className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                          onClick={handleExploreClick}
+                        >
+                          EXPLORE
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
