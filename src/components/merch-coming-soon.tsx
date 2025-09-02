@@ -6,7 +6,7 @@ import Link from "next/link"
 export default function MerchComingSoon() {
   const previewImages = [
     { src: '/preview_gallery/DSC06344.jpg', alt: 'Gallery preview 1' },
-    { src: '/preview_gallery/HOOD7031.JPG', alt: 'Gallery preview 2' },
+    { src: '/preview_gallery/HOOD7031.jpg', alt: 'Gallery preview 2' },
     { src: '/preview_gallery/HOOD6830.jpg', alt: 'Gallery preview 3' },
     { src: '/preview_gallery/HOOD6845.jpg', alt: 'Gallery preview 4' }
   ]
