@@ -19,22 +19,28 @@ const sugarMagic = localFont({
 export const metadata: Metadata = {
   title: "French for New",
   description: "We follow culture. We endorse culture. We create culture.",
+  manifest: '/manifest.json',
   icons: {
     icon: [
       {
-        url: '/images/ffn_white_logo.png',
+        url: '/favicon.ico',
         sizes: '32x32',
+        type: 'image/x-icon',
+      },
+      {
+        url: '/icon.png',
+        sizes: '16x16',
         type: 'image/png',
       },
       {
-        url: '/images/ffn_white_logo.png',
-        sizes: '16x16',
+        url: '/icon.png',
+        sizes: '32x32',
         type: 'image/png',
       }
     ],
-    shortcut: '/images/ffn_white_logo.png',
+    shortcut: '/favicon.ico',
     apple: {
-      url: '/images/ffn_white_logo.png',
+      url: '/apple-icon.png',
       sizes: '180x180',
       type: 'image/png',
     },

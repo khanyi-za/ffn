@@ -11,10 +11,13 @@ type Event = {
   date: string;
   location: string;
   link: string;
+  ticketReleaseDate?: string;
+  isSoldOut?: boolean;
 }
 
 interface CountdownTimerProps {
-  targetDate: string;
+  targetDate?: string;
+  isSoldOut?: boolean;
 }
 
 interface TimeLeft {
@@ -116,7 +119,7 @@ function TypewriterEffect({
 }
 
 // CountdownTimer component
-function CountdownTimer({ targetDate }: CountdownTimerProps) {
+function CountdownTimer({ targetDate, isSoldOut }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -126,6 +129,8 @@ function CountdownTimer({ targetDate }: CountdownTimerProps) {
   const [isExpired, setIsExpired] = useState(false)
 
   useEffect(() => {
+    if (!targetDate) return
+
     const calculateTimeLeft = () => {
       const target = new Date(targetDate).getTime()
       const now = new Date().getTime()
@@ -153,6 +158,19 @@ function CountdownTimer({ targetDate }: CountdownTimerProps) {
 
   const formatTime = (time: number) => {
     return time.toString().padStart(2, '0')
+  }
+
+  if (isSoldOut) {
+    return (
+      <div className="border-2 border-red-500 p-4 bg-black rounded-lg">
+        <p className="text-xs text-red-400 text-center mb-3 font-mono">
+          Event Status:
+        </p>
+        <div className="font-mono text-2xl text-red-500 text-center">
+          SOLD OUT
+        </div>
+      </div>
+    )
   }
 
   if (isExpired) {
@@ -235,12 +253,22 @@ export default function UpcomingEvents() {
 
   const events: Event[] = [
     {
+      id: 2,
+      title: "Soundset Sunday",
+      image: "/upcoming_events_poster/ANNOUNCER.png",
+      date: "14 September 2025",
+      location: "The Playground 73 Juta St, Braam",
+      link: "https://fixr.co/event/soundset-sunday-tickets-532387198",
+      ticketReleaseDate: "2025-09-10T12:00:00"
+    },
+    {
       id: 1,
       title: "Soundset Sunday, Season Ticket",
       image: "/upcoming_events_poster/SEASON_TICKET.png",
       date: "26 August 2025",
       location: "",
-      link: "https://fixr.co/event/soundset-sunday-season-ticket-tickets-646071320"
+      link: "https://fixr.co/event/soundset-sunday-season-ticket-tickets-646071320",
+      isSoldOut: true
     }
   ]
 
@@ -406,7 +434,10 @@ export default function UpcomingEvents() {
                   <div className="flex flex-col flex-1 gap-4">
                     {/* Countdown Timer - Medium+ screens only */}
                     <div className="hidden md:block">
-                      <CountdownTimer targetDate="2025-08-26T12:00:00" />
+                      <CountdownTimer 
+                        targetDate={event.ticketReleaseDate} 
+                        isSoldOut={event.isSoldOut}
+                      />
                     </div>
                     
                     {/* Event Details - Aligned to match the reference */}
@@ -417,14 +448,23 @@ export default function UpcomingEvents() {
 
                       {/* Buttons - Sized to match the reference */}
                       <div className="flex gap-3 sm:gap-4">
-                        <Link 
-                          href={event.link} 
-                          className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          TICKETS
-                        </Link>
+                        {event.isSoldOut ? (
+                          <button 
+                            disabled
+                            className="inline-block border-2 border-red-500 px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider bg-red-500/20 text-red-400 cursor-not-allowed"
+                          >
+                            SOLD OUT
+                          </button>
+                        ) : (
+                          <Link 
+                            href={event.link} 
+                            className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            TICKETS
+                          </Link>
+                        )}
                         <Link 
                           href="/events?event=soundset-sunday" 
                           className="inline-block border-2 border-white px-4 py-2 sm:px-6 sm:py-2 text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-colors touch-manipulation"

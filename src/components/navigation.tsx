@@ -45,6 +45,7 @@ export default function Navigation({ activePage = "" }) {
     { name: "SERVICES", path: "/services" },
     { name: "EVENTS", path: "/events" },
     { name: "GALLERY", path: "/gallery" },
+    { name: "SHOP", path: "/shop" },
     { name: "CONTACT", path: "/contact" },
   ]
 

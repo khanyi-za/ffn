@@ -100,48 +100,136 @@ function TypewriterEffect({
 export default function Shop() {
   const [isLoading, setIsLoading] = useState(true)
   const [currentImage, setCurrentImage] = useState(0);
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+  
+  // Newsletter form state
+  const [email, setEmail] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' })
 
   const handleLoadingComplete = () => {
     setIsLoading(false)
   }
 
   const images = [
-    { src: "/images/merch_1.jpeg", alt: "Soundset Sunday Merch & French for New Merch" },
-    { src: "/images/merch_2.jpeg", alt: "Soundset Sunday Merch & French for New Collection" }
+    { src: "/shop_images/shop_1.jpg", alt: "French for New Merchandise Collection" },
+    { src: "/shop_images/shop_2.jpg", alt: "Soundset Sunday Merch" },
+    { src: "/shop_images/shop_3.jpg", alt: "French for New Apparel" },
+    { src: "/shop_images/shop_4.jpg", alt: "Event Merchandise Collection" },
+    { src: "/shop_images/shop_5.jpg", alt: "Limited Edition Merch" }
+  ];
+
+  const heroImages = [
+    { src: "/images/merch_hero_1.png", alt: "Hero background image 1" },
+    { src: "/images/merch_hero_2.png", alt: "Hero background image 2" }
   ];
   
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev === 0 ? 1 : 0));
+      setCurrentImage((prev) => (prev + 1) % images.length);
     }, 3000); // Change image every 3 seconds
     
     return () => clearInterval(interval);
+  }, [images.length]);
+
+  useEffect(() => {
+    const heroInterval = setInterval(() => {
+      setCurrentHeroImage((prev) => (prev === 0 ? 1 : 0));
+    }, 5000); // Change hero background every 5 seconds
+    
+    return () => clearInterval(heroInterval);
   }, []);
+
+  // Newsletter form submission handler
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus({ type: null, message: '' })
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setSubmitStatus({
+          type: 'success',
+          message: 'Thank you! We\'ll notify you when our merchandise drops.'
+        })
+        setEmail("") // Reset form
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: result.error || 'Something went wrong. Please try again.'
+        })
+      }
+    } catch (error) {
+      console.error("Error submitting newsletter signup:", error)
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to sign up. Please check your connection and try again.'
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   if (isLoading) {
     return <PageLoader onLoadingComplete={handleLoadingComplete} />
   }
   
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white with-hero-nav">
       <Navigation activePage="SHOP" />
       
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
-        <div className="absolute inset-0 z-0">
-          <div className="w-full h-full bg-black/25"></div>
+      <section className="relative h-[50vh] sm:h-screen flex items-center justify-center overflow-hidden">
+        {/* Background image 1 */}
+        <div 
+          className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${
+            currentHeroImage === 0 ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
           <Image
-            src="/images/merch_background.jpeg" 
-            alt="Shop Coming Soon Background"
+            src={heroImages[0].src}
+            alt={heroImages[0].alt}
             fill
             priority
-            className="object-cover mix-blend-overlay opacity-30"
+            className="object-cover"
+            sizes="100vw"
           />
         </div>
+
+        {/* Background image 2 */}
+        <div 
+          className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${
+            currentHeroImage === 1 ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <Image
+            src={heroImages[1].src}
+            alt={heroImages[1].alt}
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 z-5 bg-black/40"></div>
         
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center flex items-center justify-center h-full">
           <div className="animate-fadeIn">
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light tracking-wide text-white border-2 border-white px-6 py-4">
+            <h1 className="font-serif text-2xl md:text-5xl lg:text-6xl font-light tracking-wide text-white border-2 border-white px-6 py-4">
               <TypewriterEffect 
                 text="COMING SOON..." 
                 speed={120}
@@ -164,7 +252,7 @@ export default function Shop() {
                 French for New Merch
               </h3>
               
-              <a href="#" className="inline-flex items-center text-orange-500 text-xl hover:text-orange-400 transition-colors group">
+              <a href="#newsletter-signup" className="inline-flex items-center text-orange-500 text-xl hover:text-orange-400 transition-colors group">
                 Be the first to know 
                 <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </a>
@@ -196,7 +284,7 @@ export default function Shop() {
       </section>
       
       {/* Newsletter signup */}
-      <section className="py-20 bg-black">
+      <section id="newsletter-signup" className="py-20 bg-black">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="font-serif text-3xl md:text-4xl font-light mb-8">
             BE THE FIRST TO KNOW
@@ -206,21 +294,60 @@ export default function Shop() {
             Sign up to receive updates about our merchandise launch and get early access to limited drops.
           </p>
           
-          <div className="max-w-md mx-auto">
+          {/* Status Message */}
+          {submitStatus.type && (
+            <div className={`mb-8 p-4 rounded-lg border max-w-md mx-auto ${
+              submitStatus.type === 'success' 
+                ? 'bg-green-900/20 border-green-500 text-green-300'
+                : 'bg-red-900/20 border-red-500 text-red-300'
+            }`}>
+              {submitStatus.message}
+            </div>
+          )}
+          
+          <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto">
             <div className="flex flex-col md:flex-row gap-4">
               <input 
                 type="email" 
                 placeholder="Your Email Address" 
-                className="bg-black border border-white px-6 py-3 flex-grow text-white focus:outline-none focus:ring-2 focus:ring-white"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  // Clear status when user starts typing
+                  if (submitStatus.type) {
+                    setSubmitStatus({ type: null, message: '' })
+                  }
+                }}
+                required
+                disabled={isSubmitting}
+                className="bg-black border border-white px-6 py-3 flex-grow text-white focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
               />
-              <button className="bg-white text-black px-6 py-3 font-medium hover:bg-gray-200 transition">
-                NOTIFY ME
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className={`px-6 py-3 font-medium transition ${
+                  isSubmitting
+                    ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                    : 'bg-white text-black hover:bg-gray-200'
+                }`}
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center space-x-2">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
+                      <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Submitting...</span>
+                  </span>
+                ) : (
+                  "NOTIFY ME"
+                )}
               </button>
             </div>
             <p className="text-xs mt-4 text-gray-400">
               We respect your privacy. Unsubscribe at any time.
             </p>
-          </div>
+          </form>
         </div>
       </section>
       

@@ -91,8 +91,8 @@ export default function MerchComingSoon() {
           <div className="relative overflow-hidden" style={{ backgroundColor: '#B8986A' }}>
             <div className="relative w-full h-full">
               <Image
-                src="/merch/merch_coming.jpg"
-                alt="Person wearing beige KUNYE hoodie"
+                src="/shop_images/shop_2.jpg"
+                alt="Person wearing beige Soundset Sunday Merch"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 640px) 50vw, (max-width: 768px) 45vw, (max-width: 1024px) 40vw, 35vw"
@@ -123,10 +123,13 @@ export default function MerchComingSoon() {
               FFN<br />MERCH
             </h2>
             
-            {/* Coming soon text */}
-            <p className="text-[#B8986A] text-xs sm:text-sm md:text-lg lg:text-xl font-medium tracking-widest">
-              COMING SOON
-            </p>
+            {/* See Store button */}
+            <Link 
+              href="/shop"
+              className="bg-[#B8986A] text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 text-xs sm:text-sm md:text-lg lg:text-xl font-medium tracking-widest hover:bg-[#A08459] transition-colors duration-300 rounded-md"
+            >
+              SEE STORE
+            </Link>
           </div>
         </div>
       </div>
