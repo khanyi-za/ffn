@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Navigation from '@/components/navigation'
@@ -247,7 +247,7 @@ export default function ProductPage() {
         <Navigation />
         <div className="container mx-auto px-6 pt-36 pb-12 text-center">
           <h1 className="font-serif text-4xl mb-8">Product Not Found</h1>
-          <p className="text-gray-400 mb-8">The product you're looking for doesn't exist.</p>
+          <p className="text-gray-400 mb-8">The product you&apos;re looking for doesn&apos;t exist.</p>
           <button 
             onClick={() => router.push('/shop')}
             className="bg-white text-black px-6 py-3 rounded hover:bg-gray-200 transition-colors"
