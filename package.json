@@ -16,7 +16,9 @@
     "optimize-team-images": "node scripts/optimize-team-images.js --backup",
     "optimize-team-images:dry-run": "node scripts/optimize-team-images.js --dry-run",
     "optimize-shop-images": "node scripts/optimize-shop-images.js --backup",
-    "optimize-shop-images:dry-run": "node scripts/optimize-shop-images.js --dry-run"
+    "optimize-shop-images:dry-run": "node scripts/optimize-shop-images.js --dry-run",
+    "optimize-merch-images": "node scripts/optimize-merch-folder-images.js --backup",
+    "optimize-merch-images:dry-run": "node scripts/optimize-merch-folder-images.js --dry-run"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.782.0",
