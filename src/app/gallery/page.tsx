@@ -394,9 +394,9 @@ export default function GalleryPage() {
   // Helper function to format display text
   const formatDisplayText = (text: string) => {
     if (text === "SoundSet Sunday") {
-      return "Soundset Sunday";
+      return "SoundSet Sunday";
     }
-    if (text === "Electic Sessions") {
+    if (text === "Eclectic Sessions") {
       return "Eclectic Sessions";
     }
     return text;

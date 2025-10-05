@@ -255,11 +255,11 @@ export default function UpcomingEvents() {
     {
       id: 2,
       title: "Soundset Sunday",
-      image: "/upcoming_events_poster/ANNOUNCER.png",
-      date: "14 September 2025",
-      location: "The Playground 73 Juta St, Braam",
-      link: "https://fixr.co/event/soundset-sunday-tickets-532387198",
-      ticketReleaseDate: "2025-09-12T12:00:00"
+      image: "/upcoming_events_poster/ANNOUNCER-CPT.jpg",
+      date: "12 October 2025",
+      location: "Parkview Event Space, Woodstock",
+      link: "https://fixr.co/event/soundset-sunday-tickets-452432844?region=za",
+      ticketReleaseDate: "2025-10-10T12:00:00"
     },
     {
       id: 1,

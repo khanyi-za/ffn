@@ -189,7 +189,7 @@ export default function EventUpdates({
           </div>
           <Link 
             href={
-              eventName === "SOUNDSET SUNDAY" ? "https://fixr.co/event/soundset-sunday-tickets-532387198" :
+              eventName === "SOUNDSET SUNDAY" ? "https://fixr.co/event/soundset-sunday-tickets-452432844?region=za" :
               eventName === "ELECTIC SESSIONS" ? "https://fixr.co/event/eclectic-sessions-tickets-406173760?region=za" :
               eventName === "A RARE EXPERIENCE" ? "https://fixr.co/event/soundset-sunday-x-cr8torcon-tickets-564111961?region=za" :
               "/events/tickets"

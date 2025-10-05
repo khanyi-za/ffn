@@ -30,7 +30,7 @@ const { Readable } = require('stream');
 // Configuration
 const CONFIG = {
   // S3 Configuration
-  AWS_REGION: process.env.AWS_REGION || 'us-east-1',
+  AWS_REGION: process.env.AWS_REGION || 'af-south-1',
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,

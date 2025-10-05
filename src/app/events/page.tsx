@@ -36,8 +36,8 @@ const eventData: EventsDataObjectType = {
     eventName: "SOUNDSET SUNDAY",
     description: "Soundset Sunday is the heartbeat of the culture — a sacred gathering where hip-hop flows, amapiano move, house lifts, and R&B heals. More than a party, it's a sonic sanctuary",
     tagline: "Canvas of Sound Under the Sunday Sky",
-    eventDate: "14 SEPTEMBER 25",
-    eventLocation: "The Playground 73 Juta St, Braam",
+    eventDate: "12 OCTOBER 2025",
+    eventLocation: "Parkview Event Space, Woodstock",
     eventVideo: "/videos/A_Soundset.mp4",
     logoImage: "/event_logos/Soundset.png",
     images: [

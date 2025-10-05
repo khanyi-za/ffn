@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <main className="with-hero-nav">
-      <Hero />
+     <Hero />
       <UpcomingEvents />
       <StatsSection />
       <MerchComingSoon />
